@@ -546,20 +546,15 @@ body {
 
 <script>
 // ===== PLATFORM DEFINITIONS =====
-// Each platform has URL patterns and probe timestamps that work best with
-// the Wayback Machine Availability API (archive.org/wayback/available).
-// The API needs www. prefixes and era-appropriate timestamps to find captures.
+// Simplified URL patterns - one primary, one fallback per platform.
+// The Wayback Availability API needs www. prefixes for most old sites.
 const PLATFORMS = [
   {
     id: 'geocities',
     name: 'GeoCities',
     icon: '\u{1F3DA}',
-    urls: u => [
-      `www.geocities.com/${u}`,
-      `geocities.com/${u}`,
-      `www.geocities.com/~${u}`,
-    ],
-    probeYears: [1998, 2000, 2002, 2004, 2006, 2008],
+    urls: u => [`www.geocities.com/${u}`, `geocities.com/${u}`],
+    probeYear: 2003,
     rarityBonus: 200,
     era: '1994-2009',
   },
@@ -567,8 +562,8 @@ const PLATFORMS = [
     id: 'myspace',
     name: 'MySpace',
     icon: '\u{1F3B5}',
-    urls: u => [`www.myspace.com/${u}`, `myspace.com/${u}`],
-    probeYears: [2004, 2006, 2008, 2010, 2012],
+    urls: u => [`www.myspace.com/${u}`],
+    probeYear: 2008,
     rarityBonus: 100,
     era: '2003-2012',
   },
@@ -576,14 +571,8 @@ const PLATFORMS = [
     id: 'angelfire',
     name: 'Angelfire',
     icon: '\u{1F525}',
-    urls: u => [
-      `www.angelfire.com/games/${u}`,
-      `www.angelfire.com/ca/${u}`,
-      `www.angelfire.com/punk/${u}`,
-      `www.angelfire.com/art/${u}`,
-      `www.angelfire.com/ny/${u}`,
-    ],
-    probeYears: [1999, 2001, 2003, 2005, 2007],
+    urls: u => [`www.angelfire.com/ca/${u}`, `www.angelfire.com/games/${u}`],
+    probeYear: 2003,
     rarityBonus: 150,
     era: '1996-2010',
   },
@@ -591,8 +580,8 @@ const PLATFORMS = [
     id: 'tripod',
     name: 'Tripod',
     icon: '\u{1F4F7}',
-    urls: u => [`members.tripod.com/~${u}`, `${u}.tripod.com`, `members.tripod.com/${u}`],
-    probeYears: [1999, 2001, 2003, 2005, 2007],
+    urls: u => [`members.tripod.com/${u}`, `${u}.tripod.com`],
+    probeYear: 2003,
     rarityBonus: 150,
     era: '1995-2010',
   },
@@ -600,8 +589,8 @@ const PLATFORMS = [
     id: 'livejournal',
     name: 'LiveJournal',
     icon: '\u{1F4D3}',
-    urls: u => [`${u}.livejournal.com`, `www.livejournal.com/users/${u}`],
-    probeYears: [2001, 2003, 2005, 2007, 2009],
+    urls: u => [`www.livejournal.com/users/${u}`, `${u}.livejournal.com`],
+    probeYear: 2005,
     rarityBonus: 100,
     era: '1999-2015',
   },
@@ -609,8 +598,8 @@ const PLATFORMS = [
     id: 'xanga',
     name: 'Xanga',
     icon: '\u{270D}',
-    urls: u => [`www.xanga.com/${u}`, `xanga.com/${u}`],
-    probeYears: [2002, 2004, 2006, 2008, 2010],
+    urls: u => [`www.xanga.com/${u}`],
+    probeYear: 2006,
     rarityBonus: 150,
     era: '2000-2013',
   },
@@ -618,8 +607,8 @@ const PLATFORMS = [
     id: 'deviantart',
     name: 'DeviantArt',
     icon: '\u{1F3A8}',
-    urls: u => [`${u}.deviantart.com`, `www.deviantart.com/${u}`],
-    probeYears: [2003, 2005, 2007, 2009, 2012],
+    urls: u => [`${u}.deviantart.com`],
+    probeYear: 2008,
     rarityBonus: 50,
     era: '2000-present',
   },
@@ -628,7 +617,7 @@ const PLATFORMS = [
     name: 'Blogspot',
     icon: '\u{1F4DD}',
     urls: u => [`${u}.blogspot.com`],
-    probeYears: [2004, 2006, 2008, 2010, 2013],
+    probeYear: 2008,
     rarityBonus: 50,
     era: '2003-present',
   },
@@ -637,7 +626,7 @@ const PLATFORMS = [
     name: 'AOL Hometown',
     icon: '\u{1F4E7}',
     urls: u => [`hometown.aol.com/${u}`, `members.aol.com/${u}`],
-    probeYears: [1999, 2001, 2003, 2005, 2007],
+    probeYear: 2003,
     rarityBonus: 200,
     era: '1997-2008',
   },
@@ -645,8 +634,8 @@ const PLATFORMS = [
     id: 'freewebs',
     name: 'Freewebs',
     icon: '\u{1F578}',
-    urls: u => [`www.freewebs.com/${u}`, `freewebs.com/${u}`],
-    probeYears: [2003, 2005, 2007, 2009, 2011],
+    urls: u => [`www.freewebs.com/${u}`],
+    probeYear: 2006,
     rarityBonus: 100,
     era: '2001-2012',
   },
@@ -655,7 +644,7 @@ const PLATFORMS = [
     name: 'Neopets',
     icon: '\u{1F431}',
     urls: u => [`www.neopets.com/userlookup.phtml?user=${u}`],
-    probeYears: [2002, 2004, 2006, 2008, 2010],
+    probeYear: 2006,
     rarityBonus: 100,
     era: '1999-present',
   },
@@ -663,8 +652,8 @@ const PLATFORMS = [
     id: 'bolt',
     name: 'Bolt.com',
     icon: '\u{26A1}',
-    urls: u => [`www.bolt.com/${u}`, `bolt.com/${u}`],
-    probeYears: [1999, 2001, 2003, 2005, 2007],
+    urls: u => [`www.bolt.com/${u}`],
+    probeYear: 2004,
     rarityBonus: 300,
     era: '1996-2008',
   },
@@ -685,16 +674,16 @@ function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function probeUrl(url, timestamp) {
   const ts = timestamp ? `&timestamp=${timestamp}` : '';
-  const endpoint = `${AVAIL_API}?url=${encodeURIComponent(url)}${ts}`;
+  // Don't use encodeURIComponent - it encodes / to %2F which the Wayback API rejects
+  const endpoint = `${AVAIL_API}?url=${url}${ts}`;
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
     const resp = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
     if (resp.status === 429) {
-      // Rate limited: wait and retry once
       await wait(3000);
-      const retry = await fetch(endpoint, { signal: AbortSignal.timeout(15000) });
+      const retry = await fetch(endpoint, { signal: AbortSignal.timeout(12000) });
       if (!retry.ok) return null;
       const data = await retry.json();
       const snap = data?.archived_snapshots?.closest;
@@ -716,29 +705,28 @@ async function probeUrl(url, timestamp) {
 }
 
 async function searchPlatform(platform, usernames) {
-  // Search each URL pattern sequentially. For each URL, try the peak-era
-  // timestamp first. If that misses, try one earlier and one later timestamp.
-  // Stop as soon as we find a hit.
-  const years = platform.probeYears;
-  const peakIdx = Math.floor(years.length / 2);
+  // For each username, try all URL patterns in parallel with one timestamp.
+  // This keeps request count low (~2 per platform) and finishes fast.
+  const ts = platform.probeYear + '0101';
 
   for (const username of usernames) {
     const urlPatterns = platform.urls(username);
-    for (const url of urlPatterns) {
-      // Try peak era first
-      let result = await probeUrl(url, years[peakIdx] + '0101');
-      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
-      await wait(500);
 
-      // Try earliest
-      result = await probeUrl(url, years[0] + '0101');
-      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
-      await wait(500);
+    // Fire all URL patterns for this platform in parallel
+    const promises = urlPatterns.map(url => probeUrl(url, ts));
+    const results = await Promise.allSettled(promises);
 
-      // Try latest
-      result = await probeUrl(url, years[years.length - 1] + '0101');
-      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
-      await wait(300);
+    for (let i = 0; i < results.length; i++) {
+      if (results[i].status === 'fulfilled' && results[i].value) {
+        const r = results[i].value;
+        return {
+          ...r,
+          username,
+          url: urlPatterns[i],
+          platform,
+          calendarUrl: `https://web.archive.org/web/*/${urlPatterns[i]}`,
+        };
+      }
     }
   }
   return null;
@@ -896,33 +884,48 @@ async function startDig() {
 
   renderPlatformList();
 
-  // Search platforms sequentially to avoid rate limiting
-  const allResults = [];
-  for (let idx = 0; idx < PLATFORMS.length; idx++) {
-    const platform = PLATFORMS[idx];
-    updatePlatformStatus(platform.id, 'searching', 'Searching...');
-    try {
-      const result = await searchPlatform(platform, usernames);
-      if (result) {
-        updatePlatformStatus(platform.id, 'found', 'FOUND!');
-      } else {
-        updatePlatformStatus(platform.id, 'not-found', 'Nothing');
+  try {
+    // Search platforms with small delays between each to avoid rate-limiting
+    const allResults = [];
+    for (let idx = 0; idx < PLATFORMS.length; idx++) {
+      const platform = PLATFORMS[idx];
+      updatePlatformStatus(platform.id, 'searching', 'Searching...');
+      try {
+        const result = await searchPlatform(platform, usernames);
+        if (result) {
+          updatePlatformStatus(platform.id, 'found', 'FOUND!');
+        } else {
+          updatePlatformStatus(platform.id, 'not-found', 'Nothing');
+        }
+        allResults.push(result);
+      } catch (e) {
+        console.error(`Error searching ${platform.name}:`, e);
+        updatePlatformStatus(platform.id, 'error', 'Error');
+        allResults.push(null);
       }
-      allResults.push(result);
-    } catch (e) {
-      updatePlatformStatus(platform.id, 'error', 'Error');
-      allResults.push(null);
+      // Brief delay between platforms
+      if (idx < PLATFORMS.length - 1) await new Promise(r => setTimeout(r, 300));
     }
-    // Small delay between platforms
-    if (idx < PLATFORMS.length - 1) await new Promise(r => setTimeout(r, 400));
+
+    // Short pause before showing results
+    await new Promise(r => setTimeout(r, 600));
+
+    document.getElementById('dig-section').style.display = 'none';
+    document.getElementById('results-section').style.display = '';
+    renderResults(allResults);
+  } catch (e) {
+    console.error('Dig failed:', e);
+    document.getElementById('dig-section').style.display = 'none';
+    document.getElementById('results-section').style.display = '';
+    document.getElementById('artifacts-container').innerHTML = `
+      <div class="no-results-msg">
+        Something went wrong during the dig. The Wayback Machine API might be
+        overloaded. Try again in a minute!<br><br>
+        <small style="color:#666">${e.message || 'Unknown error'}</small>
+      </div>
+    `;
+    document.getElementById('score-banner').style.display = 'none';
   }
-
-  // Short pause before showing results
-  await new Promise(r => setTimeout(r, 800));
-
-  document.getElementById('dig-section').style.display = 'none';
-  document.getElementById('results-section').style.display = '';
-  renderResults(allResults);
 
   isDigging = false;
   document.getElementById('dig-btn').disabled = false;
