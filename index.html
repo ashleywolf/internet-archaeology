@@ -304,7 +304,7 @@ h1 {
     <p style="color:#ff6699">Best viewed in Netscape Navigator 4.0 at 800x600 resolution</p>
     <p class="guestbook-link" onclick="alert('The guestbook has been offline since 2004. Sorry!')">Sign my Guestbook!</p>
     <div class="hit-counter">Visitors: <span id="hit-counter">000000</span></div>
-    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v7</p>
+    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v8</p>
   </div>
 
 </div>
@@ -477,7 +477,7 @@ function handleDig() {
 
 function showResults(results) {
   document.getElementById('progress-section').style.display = 'none';
-  document.getElementById('results-area').style.display = '';
+  document.getElementById('results-area').style.display = 'block';
   
   var confirmed = results.filter(function(r) { return r && r.confirmed; });
   var unconfirmed = results.filter(function(r) { return r && !r.confirmed; });
@@ -552,7 +552,7 @@ function makeCardHTML(r) {
 function resetDig() {
   document.getElementById('results-area').style.display = 'none';
   document.getElementById('progress-section').style.display = 'none';
-  document.getElementById('search-form').style.display = '';
+  document.getElementById('search-form').style.display = 'block';
   document.getElementById('username-input').value = '';
   document.getElementById('username-input').focus();
 }
