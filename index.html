@@ -772,10 +772,6 @@ function formatTimestamp(ts) {
   return `${ts.substring(0, 4)}-${ts.substring(4, 6)}-${ts.substring(6, 8)}`;
 }
 
-function getWaybackUrl(timestamp, originalUrl) {
-  return `https://web.archive.org/web/${timestamp}/${originalUrl}`;
-}
-
 // ===== UI RENDERING =====
 function renderPlatformList() {
   const container = document.getElementById('platform-list');
