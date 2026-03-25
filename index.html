@@ -304,7 +304,7 @@ h1 {
     <p style="color:#ff6699">Best viewed in Netscape Navigator 4.0 at 800x600 resolution</p>
     <p class="guestbook-link" onclick="alert('The guestbook has been offline since 2004. Sorry!')">Sign my Guestbook!</p>
     <div class="hit-counter">Visitors: <span id="hit-counter">000000</span></div>
-    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v8</p>
+    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v9</p>
   </div>
 
 </div>
@@ -528,24 +528,21 @@ function makeCardHTML(r) {
   var cardClass = r.confirmed ? 'artifact-card confirmed' : 'artifact-card';
   var badge = r.confirmed
     ? '<span class="badge badge-confirmed">VERIFIED FIND</span>'
-    : '<span class="badge badge-explore">Click to explore</span>';
+    : '';
   
-  var links = '<div class="card-links">' +
-    '<a href="' + r.calendarUrl + '" target="_blank">Browse all captures</a>';
-  if (r.confirmed) {
-    links += '<a href="' + r.waybackUrl + '" target="_blank">View archived page</a>';
-  } else {
-    links += '<a href="' + r.waybackUrl + '" target="_blank">Try this snapshot</a>';
-  }
-  links += '</div>';
+  var calLink = r.calendarUrl;
+  var snapLink = r.waybackUrl;
   
   return '<div class="' + cardClass + '">' +
     '<div class="card-header">' +
       '<span class="platform-label">' + r.platform.icon + ' ' + r.platform.name + '</span>' +
       badge +
     '</div>' +
-    '<div class="card-era">Era: ' + r.platform.era + ' | URL: ' + r.url + '</div>' +
-    links +
+    '<div class="card-era">Era: ' + r.platform.era + ' | ' + r.url + '</div>' +
+    '<div class="card-links">' +
+      '<a href="' + calLink + '" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:#003366;border:1px solid #00ccff;border-radius:4px;color:#00ccff;font-size:14px;margin:4px 4px 4px 0;">Browse all captures</a>' +
+      '<a href="' + snapLink + '" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:#333300;border:1px solid #ffff00;border-radius:4px;color:#ffff00;font-size:14px;margin:4px 0;">' + (r.confirmed ? 'View archived page' : 'Try this snapshot') + '</a>' +
+    '</div>' +
   '</div>';
 }
 
