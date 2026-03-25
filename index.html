@@ -4,635 +4,680 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Internet Archaeology - Find Your Forgotten Accounts</title>
+<title>Internet Archaeology - Dig Up Your Digital Past</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes scanline { 0% { top: -4px; } 100% { top: 100%; } }
+@keyframes fadeSlideIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+
 body {
-  background: #0d1117;
-  color: #c9d1d9;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  line-height: 1.6;
+  background: #0a0a0a;
+  color: #d4d4d4;
+  font-family: 'Courier New', 'Lucida Console', Monaco, monospace;
+  line-height: 1.7;
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle CRT scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
 }
 
 .container {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 48px 24px;
 }
 
-header {
+/* Header */
+.header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #222;
 }
 
-header h1 {
-  font-size: 28px;
+.header h1 {
+  font-size: 26px;
+  color: #3fb950;
   font-weight: 700;
-  color: #f0f6fc;
-  margin-bottom: 6px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(63,185,80,0.3);
 }
 
-header p {
-  color: #8b949e;
-  font-size: 15px;
+.header .tagline {
+  color: #7a7a7a;
+  font-size: 14px;
+  font-style: italic;
 }
 
-.search-box {
+.header .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: #3fb950;
+  margin-left: 4px;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}
+
+/* Search */
+.search-section {
+  margin-bottom: 36px;
+}
+
+.search-label {
+  color: #7a7a7a;
+  font-size: 13px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.search-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 32px;
+  gap: 0;
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #111;
 }
 
-.search-box input {
-  flex: 1;
-  padding: 12px 16px;
+.search-row .prompt {
+  color: #3fb950;
+  padding: 14px 8px 14px 14px;
   font-size: 16px;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  color: #f0f6fc;
+  user-select: none;
+}
+
+.search-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 14px 8px;
   outline: none;
 }
 
-.search-box input:focus {
-  border-color: #58a6ff;
-  box-shadow: 0 0 0 3px rgba(56,139,253,0.15);
-}
+.search-row input::placeholder { color: #444; }
 
-.search-box button {
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  background: #238636;
-  color: #fff;
-  border: 1px solid rgba(240,246,252,0.1);
-  border-radius: 6px;
+.search-row button {
+  background: #1a3a1a;
+  color: #3fb950;
+  border: none;
+  border-left: 1px solid #333;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
-.search-box button:hover { background: #2ea043; }
-.search-box button:disabled { opacity: 0.5; cursor: not-allowed; }
+.search-row button:hover { background: #1f4a1f; }
+.search-row button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Progress */
-#progress { display: none; margin-bottom: 24px; }
+#progress { display: none; margin-bottom: 28px; }
 
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #8b949e;
+.progress-frame {
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 16px;
+  background: #111;
 }
 
-.progress-bar-bg {
-  height: 6px;
-  background: #21262d;
-  border-radius: 3px;
+.progress-title {
+  color: #e0a030;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.progress-bar-outer {
+  height: 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 2px;
   overflow: hidden;
+  margin-bottom: 8px;
 }
 
-.progress-bar-fill {
+.progress-bar-inner {
   height: 100%;
-  background: #58a6ff;
-  border-radius: 3px;
+  background: #3fb950;
   transition: width 0.3s ease;
   width: 0%;
+  box-shadow: 0 0 8px rgba(63,185,80,0.4);
 }
 
-.scanning-label {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #6e7681;
-  font-style: italic;
+.progress-status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
 }
 
 /* Results */
 #results { display: none; }
 
-.summary-bar {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  font-size: 15px;
-}
-
-.summary-bar .found-count {
+.results-header {
   color: #3fb950;
+  font-size: 14px;
   font-weight: 700;
-  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #2a2a2a;
 }
 
-.result-card {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 16px 20px;
-  margin-bottom: 12px;
-  transition: border-color 0.2s;
+.summary {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
-.result-card.found {
+.summary .big-num {
+  color: #3fb950;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.summary .of-total { color: #666; }
+
+/* Found cards */
+.found-card {
+  background: #111;
+  border: 1px solid #2a2a2a;
   border-left: 3px solid #3fb950;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 10px;
+  animation: fadeSlideIn 0.3s ease;
 }
 
-.result-card.not-found {
-  opacity: 0.5;
-  border-left: 3px solid #30363d;
-}
-
-.result-card .card-header {
+.found-card .card-top {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
-.result-card .platform-icon {
-  font-size: 22px;
-  width: 30px;
-  text-align: center;
-}
+.found-card .icon { font-size: 18px; }
 
-.result-card .platform-name {
-  font-weight: 600;
-  font-size: 16px;
-  color: #f0f6fc;
+.found-card .name {
+  color: #e0e0e0;
+  font-weight: 700;
+  font-size: 15px;
   flex: 1;
 }
 
-.result-card .platform-era {
-  font-size: 12px;
-  color: #6e7681;
-}
-
-.result-card .badge {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-
-.badge-found {
-  background: rgba(63,185,80,0.15);
+.found-card .count {
   color: #3fb950;
-}
-
-.badge-none {
-  background: rgba(110,118,129,0.15);
-  color: #6e7681;
-}
-
-.capture-info {
-  margin: 8px 0 4px 40px;
+  font-weight: 700;
   font-size: 14px;
-  color: #8b949e;
 }
 
-.capture-info strong {
-  color: #c9d1d9;
+.found-card .quip {
+  color: #555;
+  font-size: 12px;
+  font-style: italic;
+  margin: 2px 0 8px 28px;
 }
 
-.snapshot-links {
-  margin: 10px 0 0 40px;
+.found-card .dates {
+  color: #888;
+  font-size: 13px;
+  margin: 0 0 10px 28px;
+}
+
+.found-card .dates strong { color: #c0c0c0; }
+
+.found-card .links {
+  margin-left: 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
-.snapshot-links a {
+.found-card .links a {
   display: inline-block;
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #58a6ff;
-  background: rgba(56,139,253,0.1);
-  border: 1px solid rgba(56,139,253,0.3);
-  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #e0a030;
+  background: rgba(224,160,48,0.08);
+  border: 1px solid rgba(224,160,48,0.25);
+  border-radius: 3px;
   text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.snapshot-links a:hover {
-  background: rgba(56,139,253,0.2);
-  border-color: #58a6ff;
+.found-card .links a:hover {
+  background: rgba(224,160,48,0.15);
+  border-color: #e0a030;
 }
 
+/* Not found */
 .not-found-section {
-  margin-top: 32px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px dashed #2a2a2a;
 }
 
-.not-found-section h3 {
-  font-size: 14px;
-  color: #6e7681;
-  font-weight: 500;
+.not-found-label {
+  color: #555;
+  font-size: 12px;
   margin-bottom: 8px;
 }
 
 .not-found-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .not-found-chip {
+  font-size: 11px;
+  color: #444;
+  padding: 2px 8px;
+  border: 1px solid #222;
+  border-radius: 3px;
+}
+
+/* Lite mode warning */
+.lite-warning {
+  background: rgba(224,160,48,0.08);
+  border: 1px solid rgba(224,160,48,0.2);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
   font-size: 12px;
-  color: #6e7681;
-  background: #161b22;
-  border: 1px solid #21262d;
-  border-radius: 12px;
-  padding: 4px 10px;
+  color: #a07820;
 }
 
-/* API warning */
-.api-warning {
-  background: rgba(210,153,34,0.1);
-  border: 1px solid rgba(210,153,34,0.3);
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin-bottom: 24px;
-  font-size: 13px;
-  color: #d2992a;
-}
+.lite-warning a { color: #e0a030; }
 
-.api-warning a { color: #e3b341; }
-
+/* Footer */
 footer {
   text-align: center;
   margin-top: 48px;
-  padding-top: 24px;
-  border-top: 1px solid #21262d;
-  font-size: 12px;
-  color: #484f58;
+  padding-top: 20px;
+  border-top: 1px solid #1a1a1a;
+  font-size: 11px;
+  color: #333;
 }
 
-footer a { color: #58a6ff; text-decoration: none; }
+footer a { color: #3fb950; text-decoration: none; }
 
 @media (max-width: 500px) {
-  .search-box { flex-direction: column; }
-  .search-box button { width: 100%; }
   .container { padding: 24px 16px; }
-  header h1 { font-size: 22px; }
+  .header h1 { font-size: 20px; }
+  .search-row button { padding: 14px 12px; font-size: 12px; }
 }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
+  <div class="header">
     <h1>Internet Archaeology</h1>
-    <p>Search the Wayback Machine for your old accounts across 20+ platforms</p>
-  </header>
-
-  <div id="api-warning" class="api-warning" style="display:none">
-    Running in lite mode (limited results). For full search, <a href="https://github.com/ashleywolf/internet-archaeology#deploy-to-vercel" target="_blank">deploy to Vercel</a>.
+    <p class="tagline">Unearthing your embarrassing digital past<span class="cursor"></span></p>
   </div>
 
-  <div class="search-box">
-    <input type="text" id="username" placeholder="Enter a username..." autocomplete="off" autofocus>
-    <button id="dig-btn" onclick="startDig()">Search</button>
+  <div id="lite-warning" class="lite-warning" style="display:none">
+    Limited mode -- search results may be incomplete without a backend.
+    <a href="https://github.com/ashleywolf/internet-archaeology#deploy" target="_blank">Deploy with Netlify or Vercel</a> for full CDX API access.
+  </div>
+
+  <div class="search-section">
+    <span class="search-label">Who are we looking for?</span>
+    <div class="search-row">
+      <span class="prompt">&gt;</span>
+      <input type="text" id="username" placeholder="enter a username" autocomplete="off" autofocus>
+      <button id="dig-btn" onclick="startDig()">Dig</button>
+    </div>
   </div>
 
   <div id="progress">
-    <div class="progress-header">
-      <span id="progress-label">Searching...</span>
-      <span id="progress-count">0 / 0</span>
+    <div class="progress-frame">
+      <div class="progress-title">Excavation in progress</div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="bar"></div>
+      </div>
+      <div class="progress-status">
+        <span id="scan-target">...</span>
+        <span id="scan-pct">0%</span>
+      </div>
     </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="progress-fill"></div>
-    </div>
-    <div class="scanning-label" id="scanning-label"></div>
   </div>
 
   <div id="results"></div>
 
   <footer>
-    <a href="https://github.com/ashleywolf/internet-archaeology" target="_blank">Source on GitHub</a> | v10
+    <a href="https://github.com/ashleywolf/internet-archaeology" target="_blank">source</a>
+    &middot; powered by the <a href="https://web.archive.org" target="_blank">Wayback Machine</a>
+    &middot; v11
   </footer>
 </div>
 
 <script>
 (function() {
-  // ---- Platform definitions ----
+
   var PLATFORMS = [
-    { name: 'MySpace', icon: '🎵', era: '2003-2009',
+    { name: 'MySpace', icon: '\uD83C\uDFB5', era: '2003-2009',
+      quip: 'Your Top 8 is still out there',
       urls: ['myspace.com/{u}'] },
-    { name: 'LiveJournal', icon: '📓', era: '1999-2012',
+    { name: 'LiveJournal', icon: '\uD83D\uDCD3', era: '1999-2012',
+      quip: 'All that poetry, preserved forever',
       urls: ['{u}.livejournal.com', 'livejournal.com/users/{u}', 'users.livejournal.com/{u}'] },
-    { name: 'Xanga', icon: '📝', era: '2000-2009',
+    { name: 'Xanga', icon: '\uD83D\uDCDD', era: '2000-2009',
+      quip: 'Peak mid-2000s blogging',
       urls: ['xanga.com/{u}'] },
-    { name: 'Friendster', icon: '🤝', era: '2002-2011',
+    { name: 'Friendster', icon: '\uD83E\uDD1D', era: '2002-2011',
+      quip: 'The OG social network',
       urls: ['friendster.com/{u}'] },
-    { name: 'GeoCities', icon: '🌐', era: '1994-2009',
+    { name: 'GeoCities', icon: '\uD83C\uDF10', era: '1994-2009',
+      quip: 'Under construction since \'97',
       urls: ['geocities.com/{u}'] },
-    { name: 'Angelfire', icon: '🔥', era: '1996-2014',
+    { name: 'Angelfire', icon: '\uD83D\uDD25', era: '1996-2014',
+      quip: 'Free hosting, eternal cringe',
       urls: ['angelfire.com/{u}'] },
-    { name: 'Tripod', icon: '🏗', era: '1995-2009',
+    { name: 'Tripod', icon: '\uD83C\uDFD7', era: '1995-2009',
+      quip: 'Before Squarespace existed',
       urls: ['{u}.tripod.com'] },
-    { name: 'DeviantArt', icon: '🎨', era: '2000-now',
+    { name: 'DeviantArt', icon: '\uD83C\uDFA8', era: '2000-now',
+      quip: 'Your art phase lives on',
       urls: ['{u}.deviantart.com', 'deviantart.com/{u}'] },
-    { name: 'Photobucket', icon: '📸', era: '2003-now',
+    { name: 'Photobucket', icon: '\uD83D\uDCF8', era: '2003-now',
+      quip: 'Bandwidth exceeded',
       urls: ['photobucket.com/user/{u}'] },
-    { name: 'hi5', icon: '🖐', era: '2003-2017',
+    { name: 'hi5', icon: '\uD83D\uDD90', era: '2003-2017',
+      quip: 'Huge in Latin America',
       urls: ['hi5.com/{u}'] },
-    { name: 'Bebo', icon: '💬', era: '2005-2013',
+    { name: 'Bebo', icon: '\uD83D\uDCAC', era: '2005-2013',
+      quip: 'Big in the UK and Ireland',
       urls: ['bebo.com/{u}'] },
-    { name: 'Neopets', icon: '🐾', era: '1999-now',
+    { name: 'Neopets', icon: '\uD83D\uDC3E', era: '1999-now',
+      quip: 'Your pets are still hungry',
       urls: ['neopets.com/userlookup.phtml?user={u}', 'neopets.com/~{u}'] },
-    { name: 'Last.fm', icon: '🎧', era: '2002-now',
+    { name: 'Last.fm', icon: '\uD83C\uDFA7', era: '2002-now',
+      quip: 'Your listening history is public',
       urls: ['last.fm/user/{u}', 'lastfm.com/user/{u}'] },
-    { name: 'Flickr', icon: '📷', era: '2004-now',
+    { name: 'Flickr', icon: '\uD83D\uDCF7', era: '2004-now',
+      quip: 'When photos had comment threads',
       urls: ['flickr.com/photos/{u}'] },
-    { name: 'Tumblr', icon: '📱', era: '2007-now',
+    { name: 'Tumblr', icon: '\uD83D\uDCF1', era: '2007-now',
+      quip: 'The dashboard never forgets',
       urls: ['{u}.tumblr.com'] },
-    { name: 'Twitter', icon: '🐦', era: '2006-now',
+    { name: 'Twitter', icon: '\uD83D\uDC26', era: '2006-now',
+      quip: 'Your earliest hot takes',
       urls: ['twitter.com/{u}'] },
-    { name: 'Digg', icon: '📰', era: '2004-2012',
+    { name: 'Digg', icon: '\uD83D\uDCF0', era: '2004-2012',
+      quip: 'Before Reddit won',
       urls: ['digg.com/users/{u}'] },
-    { name: 'Delicious', icon: '🔖', era: '2003-2017',
+    { name: 'Delicious', icon: '\uD83D\uDD16', era: '2003-2017',
+      quip: 'Social bookmarking was a thing',
       urls: ['del.icio.us/{u}', 'delicious.com/{u}'] },
-    { name: 'StumbleUpon', icon: '🎲', era: '2001-2018',
+    { name: 'StumbleUpon', icon: '\uD83C\uDFB2', era: '2001-2018',
+      quip: 'Random internet discovery',
       urls: ['stumbleupon.com/stumbler/{u}'] },
-    { name: 'Google+', icon: '🔴', era: '2011-2019',
+    { name: 'Google+', icon: '\uD83D\uDD34', era: '2011-2019',
+      quip: 'It existed. Barely.',
       urls: ['plus.google.com/+{u}'] },
-    { name: 'Vine', icon: '🌿', era: '2013-2017',
+    { name: 'Vine', icon: '\uD83C\uDF3F', era: '2013-2017',
+      quip: 'Six seconds of fame',
       urls: ['vine.co/{u}'] },
-    { name: 'AOL Hometown', icon: '📡', era: '1996-2008',
+    { name: 'AOL Hometown', icon: '\uD83D\uDCE1', era: '1996-2008',
+      quip: 'You\'ve got a homepage',
       urls: ['hometown.aol.com/{u}', 'members.aol.com/{u}'] },
-    { name: 'Orkut', icon: '🟣', era: '2004-2014',
+    { name: 'Orkut', icon: '\uD83D\uDFE3', era: '2004-2014',
+      quip: 'Massive in Brazil',
       urls: ['orkut.com/Profile?uid={u}'] },
-    { name: 'Blogger', icon: '🅱', era: '1999-now',
+    { name: 'Blogger', icon: '\uD83C\uDD71', era: '1999-now',
+      quip: 'The original blog platform',
       urls: ['{u}.blogspot.com'] }
   ];
 
-  var apiMode = 'unknown'; // 'full', 'lite', or 'unknown'
+  var apiMode = 'unknown';
   var isSearching = false;
 
-  // ---- Detect API mode ----
   function detectApi() {
     return fetch('/api/search?url=example.com')
-      .then(function(r) { return r.ok || r.status === 400; })
-      .then(function(available) {
-        apiMode = available ? 'full' : 'lite';
-        return apiMode;
+      .then(function(r) {
+        if (r.ok || r.status === 400) { apiMode = 'full'; }
+        else { apiMode = 'lite'; }
       })
-      .catch(function() {
-        apiMode = 'lite';
-        return apiMode;
-      });
+      .catch(function() { apiMode = 'lite'; });
   }
 
-  // ---- Search functions ----
-
-  // Full mode: call our API proxy -> CDX API
-  function searchUrlFull(url) {
+  function searchFull(url) {
     return fetch('/api/search?url=' + encodeURIComponent(url))
       .then(function(r) { return r.json(); })
       .catch(function() { return { captures: 0 }; });
   }
 
-  // Lite mode: call Wayback Availability API directly (has CORS, but unreliable)
-  function searchUrlLite(url) {
+  function searchLite(url) {
     return fetch('https://archive.org/wayback/available?url=' + url + '&timestamp=20050101')
       .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data && data.archived_snapshots && data.archived_snapshots.closest) {
-          var snap = data.archived_snapshots.closest;
-          return {
-            captures: 1,
-            first: snap.timestamp,
-            last: snap.timestamp,
-            samples: [{ ts: snap.timestamp, url: snap.url, wayback: snap.url }]
-          };
+      .then(function(d) {
+        if (d && d.archived_snapshots && d.archived_snapshots.closest) {
+          var s = d.archived_snapshots.closest;
+          return { captures: 1, first: s.timestamp, last: s.timestamp, samples: [{ ts: s.timestamp, url: s.url, wayback: s.url }] };
         }
         return { captures: 0 };
       })
       .catch(function() { return { captures: 0 }; });
   }
 
-  function searchUrl(url) {
-    if (apiMode === 'full') return searchUrlFull(url);
-    return searchUrlLite(url);
+  function doSearch(url) {
+    return apiMode === 'full' ? searchFull(url) : searchLite(url);
   }
 
-  // ---- Build search queue ----
-  function buildSearchQueue(username) {
+  function startDig() {
+    if (isSearching) return;
+    var username = document.getElementById('username').value.trim();
+    if (!username) { document.getElementById('username').focus(); return; }
+
+    isSearching = true;
+    document.getElementById('dig-btn').disabled = true;
+    document.getElementById('dig-btn').textContent = '...';
+
+    // Build URL queue
     var queue = [];
     for (var i = 0; i < PLATFORMS.length; i++) {
       var p = PLATFORMS[i];
       for (var j = 0; j < p.urls.length; j++) {
-        var url = p.urls[j].replace(/\{u\}/g, username);
-        queue.push({ platform: p, url: url });
+        queue.push({ platform: p, url: p.urls[j].replace(/\{u\}/g, username) });
       }
     }
-    return queue;
-  }
 
-  // ---- Main search ----
-  function startDig() {
-    if (isSearching) return;
-
-    var username = document.getElementById('username').value.trim();
-    if (!username) {
-      document.getElementById('username').focus();
-      return;
-    }
-
-    isSearching = true;
-    document.getElementById('dig-btn').disabled = true;
-
-    var queue = buildSearchQueue(username);
     var total = queue.length;
     var completed = 0;
-    var platformResults = {}; // platform name -> best result
-    var foundPlatforms = [];
-    var notFoundPlatforms = [];
+    var platformResults = {};
 
     // Show progress
-    var progressEl = document.getElementById('progress');
-    var resultsEl = document.getElementById('results');
-    progressEl.style.display = 'block';
-    resultsEl.style.display = 'block';
-    resultsEl.innerHTML = '';
-    updateProgress(0, total, '');
+    document.getElementById('progress').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('results').innerHTML = '';
+    updateBar(0, total, '');
 
-    // Concurrent search with pool
-    var concurrency = (apiMode === 'full') ? 4 : 2;
     var idx = 0;
     var active = 0;
+    var concurrency = apiMode === 'full' ? 4 : 2;
 
-    function next() {
+    function pump() {
       while (active < concurrency && idx < queue.length) {
-        var item = queue[idx];
-        idx++;
+        var item = queue[idx++];
         active++;
-        (function(searchItem) {
-          searchUrl(searchItem.url).then(function(result) {
+        (function(si) {
+          doSearch(si.url).then(function(r) {
             active--;
             completed++;
-            updateProgress(completed, total, searchItem.platform.name);
+            updateBar(completed, total, si.platform.name);
 
-            if (result && result.captures > 0) {
-              var name = searchItem.platform.name;
-              var existing = platformResults[name];
-              if (!existing || result.captures > existing.captures) {
-                platformResults[name] = {
-                  platform: searchItem.platform,
-                  url: searchItem.url,
-                  captures: result.captures,
-                  first: result.first,
-                  last: result.last,
-                  samples: result.samples || []
+            if (r && r.captures > 0) {
+              var nm = si.platform.name;
+              var ex = platformResults[nm];
+              if (!ex || r.captures > ex.captures) {
+                platformResults[nm] = {
+                  platform: si.platform, url: si.url,
+                  captures: r.captures, first: r.first, last: r.last,
+                  samples: r.samples || []
                 };
               }
             }
 
-            if (completed === total) {
-              finishSearch(platformResults);
+            if (completed >= total) {
+              finish(platformResults, username);
             } else {
-              next();
+              pump();
             }
           });
         })(item);
       }
     }
-
-    next();
+    pump();
   }
 
-  function updateProgress(done, total, currentPlatform) {
+  function updateBar(done, total, platformName) {
     var pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-count').textContent = done + ' / ' + total;
-    document.getElementById('progress-label').textContent = done < total ? 'Searching...' : 'Done';
-    if (currentPlatform) {
-      document.getElementById('scanning-label').textContent = 'Checking ' + currentPlatform + '...';
-    }
+    document.getElementById('bar').style.width = pct + '%';
+    document.getElementById('scan-pct').textContent = pct + '%';
+    document.getElementById('scan-target').textContent = done < total ? 'Checking ' + platformName + '...' : 'Done';
   }
 
-  function finishSearch(platformResults) {
+  function finish(results, username) {
     isSearching = false;
     document.getElementById('dig-btn').disabled = false;
-    document.getElementById('scanning-label').textContent = '';
+    document.getElementById('dig-btn').textContent = 'Dig';
+    document.getElementById('progress').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
 
     var found = [];
     var notFound = [];
-
     for (var i = 0; i < PLATFORMS.length; i++) {
-      var p = PLATFORMS[i];
-      if (platformResults[p.name]) {
-        found.push(platformResults[p.name]);
-      } else {
-        notFound.push(p);
-      }
+      if (results[PLATFORMS[i].name]) { found.push(results[PLATFORMS[i].name]); }
+      else { notFound.push(PLATFORMS[i]); }
     }
-
-    // Sort found by capture count (most captures first)
     found.sort(function(a, b) { return b.captures - a.captures; });
 
-    renderResults(found, notFound);
-  }
-
-  // ---- Rendering ----
-
-  function formatTs(ts) {
-    if (!ts || ts.length < 8) return '';
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var y = ts.substring(0, 4);
-    var m = parseInt(ts.substring(4, 6), 10);
-    var d = parseInt(ts.substring(6, 8), 10);
-    return months[m - 1] + ' ' + d + ', ' + y;
-  }
-
-  function yearFromTs(ts) {
-    if (!ts || ts.length < 4) return '?';
-    return ts.substring(0, 4);
-  }
-
-  function renderResults(found, notFound) {
     var html = '';
 
+    // Header
+    html += '<div class="results-header">Excavation Report: ' + escHtml(username) + '</div>';
+
     // Summary
-    html += '<div class="summary-bar">';
+    html += '<div class="summary">';
     if (found.length > 0) {
-      html += '<span class="found-count">' + found.length + '</span>';
-      html += ' platform' + (found.length === 1 ? '' : 's') + ' with archived captures found';
-      html += ' <span style="color:#6e7681">(out of ' + PLATFORMS.length + ' searched)</span>';
+      html += '<span class="big-num">' + found.length + '</span> platform' + (found.length === 1 ? '' : 's');
+      html += ' with archived captures <span class="of-total">(of ' + PLATFORMS.length + ' searched)</span>';
     } else {
-      html += 'No archived captures found across ' + PLATFORMS.length + ' platforms. ';
-      html += 'This username may not have been captured by the Wayback Machine, ';
-      html += 'or may have used different names on different sites.';
+      html += 'No archived traces found across ' + PLATFORMS.length + ' platforms for "' + escHtml(username) + '". ';
+      html += 'They might have used a different handle, or the Wayback Machine never captured those pages.';
     }
     html += '</div>';
 
     // Found cards
-    for (var i = 0; i < found.length; i++) {
-      var r = found[i];
-      html += '<div class="result-card found">';
-      html += '<div class="card-header">';
-      html += '<span class="platform-icon">' + r.platform.icon + '</span>';
-      html += '<span class="platform-name">' + r.platform.name + '</span>';
-      html += '<span class="platform-era">' + r.platform.era + '</span>';
-      html += '<span class="badge badge-found">' + r.captures + ' capture' + (r.captures === 1 ? '' : 's') + '</span>';
+    for (var f = 0; f < found.length; f++) {
+      var r = found[f];
+      html += '<div class="found-card">';
+
+      html += '<div class="card-top">';
+      html += '<span class="icon">' + r.platform.icon + '</span>';
+      html += '<span class="name">' + r.platform.name + '</span>';
+      html += '<span class="count">' + r.captures + ' capture' + (r.captures === 1 ? '' : 's') + '</span>';
       html += '</div>';
 
-      // Capture date range
-      html += '<div class="capture-info">';
+      if (r.platform.quip) {
+        html += '<div class="quip">' + r.platform.quip + '</div>';
+      }
+
+      html += '<div class="dates">';
       if (r.first && r.last && r.first !== r.last) {
-        html += 'Archived from <strong>' + formatTs(r.first) + '</strong>';
-        html += ' to <strong>' + formatTs(r.last) + '</strong>';
+        html += 'First spotted <strong>' + fmtDate(r.first) + '</strong>';
+        html += ' &mdash; last seen <strong>' + fmtDate(r.last) + '</strong>';
       } else if (r.first) {
-        html += 'Captured on <strong>' + formatTs(r.first) + '</strong>';
+        html += 'Captured <strong>' + fmtDate(r.first) + '</strong>';
       }
       html += '</div>';
 
-      // Snapshot links
-      if (r.samples && r.samples.length > 0) {
-        html += '<div class="snapshot-links">';
-        if (r.samples.length >= 2) {
-          html += '<a href="' + r.samples[0].wayback + '" target="_blank" rel="noopener">Earliest snapshot (' + yearFromTs(r.samples[0].ts) + ')</a>';
-          html += '<a href="' + r.samples[r.samples.length - 1].wayback + '" target="_blank" rel="noopener">Latest snapshot (' + yearFromTs(r.samples[r.samples.length - 1].ts) + ')</a>';
-        } else {
-          html += '<a href="' + r.samples[0].wayback + '" target="_blank" rel="noopener">View snapshot</a>';
-        }
-        // All captures link
-        html += '<a href="https://web.archive.org/web/*/' + r.url + '" target="_blank" rel="noopener">All captures</a>';
-        html += '</div>';
+      html += '<div class="links">';
+      if (r.samples && r.samples.length >= 2) {
+        html += '<a href="' + escAttr(r.samples[0].wayback) + '" target="_blank" rel="noopener">Earliest (' + yr(r.samples[0].ts) + ')</a>';
+        html += '<a href="' + escAttr(r.samples[r.samples.length - 1].wayback) + '" target="_blank" rel="noopener">Latest (' + yr(r.samples[r.samples.length - 1].ts) + ')</a>';
+      } else if (r.samples && r.samples.length === 1) {
+        html += '<a href="' + escAttr(r.samples[0].wayback) + '" target="_blank" rel="noopener">View snapshot</a>';
       }
+      html += '<a href="https://web.archive.org/web/*/' + escAttr(r.url) + '" target="_blank" rel="noopener">All captures</a>';
+      html += '</div>';
 
       html += '</div>';
     }
 
-    // Not found — compact list
+    // Not found
     if (notFound.length > 0) {
       html += '<div class="not-found-section">';
-      html += '<h3>No captures found on ' + notFound.length + ' other platforms:</h3>';
+      html += '<div class="not-found-label">No traces on ' + notFound.length + ' other platforms:</div>';
       html += '<div class="not-found-list">';
-      for (var j = 0; j < notFound.length; j++) {
-        html += '<span class="not-found-chip">' + notFound[j].icon + ' ' + notFound[j].name + '</span>';
+      for (var n = 0; n < notFound.length; n++) {
+        html += '<span class="not-found-chip">' + notFound[n].icon + ' ' + notFound[n].name + '</span>';
       }
-      html += '</div>';
-      html += '</div>';
+      html += '</div></div>';
     }
 
     document.getElementById('results').innerHTML = html;
   }
 
-  // ---- Init ----
+  function fmtDate(ts) {
+    if (!ts || ts.length < 8) return '??';
+    var mm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return mm[parseInt(ts.substring(4,6),10)-1] + ' ' + parseInt(ts.substring(6,8),10) + ', ' + ts.substring(0,4);
+  }
+
+  function yr(ts) { return ts && ts.length >= 4 ? ts.substring(0,4) : '?'; }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+  }
+
+  function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
+
+  // Init
   document.getElementById('username').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.keyCode === 13) startDig();
   });
 
-  // Detect API availability
-  detectApi().then(function(mode) {
-    if (mode === 'lite') {
-      document.getElementById('api-warning').style.display = 'block';
+  detectApi().then(function() {
+    if (apiMode === 'lite') {
+      document.getElementById('lite-warning').style.display = 'block';
     }
   });
 
-  // Expose startDig globally for the button onclick
   window.startDig = startDig;
 })();
 </script>

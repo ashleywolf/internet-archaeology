@@ -1,23 +1,34 @@
 # Internet Archaeology
 
-Search the Wayback Machine for your old internet accounts across 20+ platforms. Enter a username and the tool searches MySpace, LiveJournal, Xanga, GeoCities, DeviantArt, Tumblr, early Twitter, and more.
+Search the Wayback Machine for your old internet accounts across 24 platforms. Enter a username and the tool searches MySpace, LiveJournal, Xanga, GeoCities, DeviantArt, Tumblr, early Twitter, and more — returning real capture data with dates and direct links to archived snapshots.
 
 ## How it works
 
-The app sends your username to a serverless function that queries the [Wayback Machine CDX API](https://github.com/internetarchive/wayback/tree/master/wayback-cdx-server) for each platform. The CDX API returns actual capture data — timestamps, URLs, and snapshot counts — so you see real results, not guesses.
+The app queries the [Wayback Machine CDX API](https://github.com/internetarchive/wayback/tree/master/wayback-cdx-server) through a serverless proxy for each platform. The CDX API has no CORS headers, so a small backend function is needed. The frontend shows results as they come in — capture counts, date ranges, and links to actual snapshots.
 
-Without the serverless function (e.g., on GitHub Pages), the app falls back to the browser-accessible Availability API, which is slower and less reliable.
+## Deploy
 
-## Deploy to Vercel
+Pick whichever platform you prefer. All three are free and auto-deploy from this repo.
 
-This is the recommended setup. Vercel runs the CDX API proxy as a serverless function.
+### Netlify (recommended)
 
-1. Push this repo to GitHub (already done if you're reading this there)
-2. Go to [vercel.com](https://vercel.com) and sign in with GitHub
-3. Click **Add New Project**, import `internet-archaeology`
-4. Click **Deploy** — no configuration needed
+1. Go to [app.netlify.com](https://app.netlify.com) and sign in with GitHub
+2. Click **Add new site** > **Import an existing project**
+3. Select this repo, click **Deploy site**
 
-Vercel auto-deploys on every push to `main`.
+Config is in `netlify.toml` — no build settings to change.
+
+### Vercel
+
+1. Go to [vercel.com](https://vercel.com) and sign in with GitHub
+2. Click **Add New Project**, import this repo
+3. Click **Deploy**
+
+Config is in `vercel.json` — no build settings to change.
+
+### GitHub Pages (limited)
+
+Works as a static site on GitHub Pages but falls back to the less reliable Availability API (no server = no CDX API access). Results will be incomplete.
 
 ## Local development
 
@@ -26,7 +37,7 @@ npm run dev
 # Open http://localhost:3000
 ```
 
-The local server proxies `/api/search` to the CDX API, same as Vercel does in production.
+The local server handles both static files and the `/api/search` proxy.
 
 ## Platforms searched
 
