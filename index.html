@@ -677,26 +677,37 @@ document.getElementById('visitor-count-marquee').textContent = visitorNum.toLoca
 
 // ===== WAYBACK AVAILABILITY API SEARCH =====
 // Uses archive.org/wayback/available which has CORS support.
-// We probe multiple timestamps per URL to find the earliest capture.
+// We search sequentially and throttle to avoid 429 rate limits.
 const AVAIL_API = 'https://archive.org/wayback/available';
 
+// Throttle: wait between requests to avoid 429s
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
 async function probeUrl(url, timestamp) {
-  const ts = timestamp ? `&timestamp=${timestamp}0101` : '';
+  const ts = timestamp ? `&timestamp=${timestamp}` : '';
   const endpoint = `${AVAIL_API}?url=${encodeURIComponent(url)}${ts}`;
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
     const resp = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
+    if (resp.status === 429) {
+      // Rate limited: wait and retry once
+      await wait(3000);
+      const retry = await fetch(endpoint, { signal: AbortSignal.timeout(15000) });
+      if (!retry.ok) return null;
+      const data = await retry.json();
+      const snap = data?.archived_snapshots?.closest;
+      if (snap && snap.available && snap.status === '200') {
+        return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
+      }
+      return null;
+    }
     if (!resp.ok) return null;
     const data = await resp.json();
     const snap = data?.archived_snapshots?.closest;
     if (snap && snap.available && snap.status === '200') {
-      return {
-        url: data.url,
-        timestamp: snap.timestamp,
-        waybackUrl: snap.url,
-      };
+      return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
     }
     return null;
   } catch (e) {
@@ -705,39 +716,32 @@ async function probeUrl(url, timestamp) {
 }
 
 async function searchPlatform(platform, usernames) {
-  // For each username x URL pattern x probe year, fire all probes in parallel
-  const probes = [];
+  // Search each URL pattern sequentially. For each URL, try the peak-era
+  // timestamp first. If that misses, try one earlier and one later timestamp.
+  // Stop as soon as we find a hit.
+  const years = platform.probeYears;
+  const peakIdx = Math.floor(years.length / 2);
+
   for (const username of usernames) {
     const urlPatterns = platform.urls(username);
     for (const url of urlPatterns) {
-      for (const year of platform.probeYears) {
-        probes.push(probeUrl(url, year).then(r => r ? { ...r, username, url } : null));
-      }
+      // Try peak era first
+      let result = await probeUrl(url, years[peakIdx] + '0101');
+      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
+      await wait(500);
+
+      // Try earliest
+      result = await probeUrl(url, years[0] + '0101');
+      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
+      await wait(500);
+
+      // Try latest
+      result = await probeUrl(url, years[years.length - 1] + '0101');
+      if (result) return { ...result, username, url, platform, calendarUrl: `https://web.archive.org/web/*/${url}` };
+      await wait(300);
     }
   }
-
-  const results = await Promise.all(probes);
-  const hits = results.filter(r => r !== null);
-
-  if (hits.length === 0) return null;
-
-  // Find the earliest capture
-  hits.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-  const earliest = hits[0];
-
-  // Deduplicate to count unique timestamps found
-  const uniqueTimestamps = new Set(hits.map(h => h.timestamp.substring(0, 8)));
-
-  return {
-    url: earliest.url,
-    username: earliest.username,
-    platform,
-    earliest: earliest.timestamp,
-    latest: hits[hits.length - 1].timestamp,
-    waybackUrl: earliest.waybackUrl,
-    captures: uniqueTimestamps.size,
-    calendarUrl: `https://web.archive.org/web/*/${earliest.url}`,
-  };
+  return null;
 }
 
 // ===== SCORING =====
@@ -745,15 +749,13 @@ function calculateScore(result) {
   if (!result) return 0;
   let score = 100; // base
   // Age bonus: +10 per year before 2005
-  const yearStr = result.earliest.substring(0, 4);
+  const yearStr = result.timestamp.substring(0, 4);
   const year = parseInt(yearStr);
   if (year < 2005) {
     score += (2005 - year) * 10;
   }
   // Rarity bonus
   score += result.platform.rarityBonus;
-  // Multiple captures bonus
-  if (result.captures > 10) score += 50;
   return score;
 }
 
@@ -837,8 +839,6 @@ function renderResults(results) {
     card.className = 'artifact-card';
     const waybackLink = r.waybackUrl;
     const calendarLink = r.calendarUrl;
-    const maxCaptures = 10;
-    const barWidth = Math.min(100, (r.captures / maxCaptures) * 100);
     card.innerHTML = `
       <div class="card-header">
         <span class="platform-label">${r.platform.icon} ${r.platform.name}</span>
@@ -854,12 +854,8 @@ function renderResults(results) {
           <span class="detail-value">${r.url}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">First seen:</span>
-          <span class="detail-value">${formatTimestamp(r.earliest)}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Last seen:</span>
-          <span class="detail-value">${formatTimestamp(r.latest)}</span>
+          <span class="detail-label">Archived:</span>
+          <span class="detail-value">${formatTimestamp(r.timestamp)}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">View it:</span>
@@ -870,7 +866,6 @@ function renderResults(results) {
           <span class="detail-value"><a href="${calendarLink}" target="_blank" rel="noopener">Browse full timeline</a></span>
         </div>
       </div>
-      <div class="captures-bar"><div class="captures-bar-fill" style="width:${barWidth}%"></div></div>
     `;
     container.appendChild(card);
   }
@@ -905,29 +900,26 @@ async function startDig() {
 
   renderPlatformList();
 
-  // Search all platforms (with slight stagger for visual effect)
-  const results = [];
-  const promises = PLATFORMS.map((platform, idx) => {
-    return new Promise(resolve => {
-      setTimeout(async () => {
-        updatePlatformStatus(platform.id, 'searching', 'Searching...');
-        try {
-          const result = await searchPlatform(platform, usernames);
-          if (result) {
-            updatePlatformStatus(platform.id, 'found', `FOUND! (${result.captures})`);
-          } else {
-            updatePlatformStatus(platform.id, 'not-found', 'Nothing');
-          }
-          resolve(result);
-        } catch (e) {
-          updatePlatformStatus(platform.id, 'error', 'Error');
-          resolve(null);
-        }
-      }, idx * 300); // stagger by 300ms for visual effect
-    });
-  });
-
-  const allResults = await Promise.all(promises);
+  // Search platforms sequentially to avoid rate limiting
+  const allResults = [];
+  for (let idx = 0; idx < PLATFORMS.length; idx++) {
+    const platform = PLATFORMS[idx];
+    updatePlatformStatus(platform.id, 'searching', 'Searching...');
+    try {
+      const result = await searchPlatform(platform, usernames);
+      if (result) {
+        updatePlatformStatus(platform.id, 'found', 'FOUND!');
+      } else {
+        updatePlatformStatus(platform.id, 'not-found', 'Nothing');
+      }
+      allResults.push(result);
+    } catch (e) {
+      updatePlatformStatus(platform.id, 'error', 'Error');
+      allResults.push(null);
+    }
+    // Small delay between platforms
+    if (idx < PLATFORMS.length - 1) await new Promise(r => setTimeout(r, 400));
+  }
 
   // Short pause before showing results
   await new Promise(r => setTimeout(r, 800));
