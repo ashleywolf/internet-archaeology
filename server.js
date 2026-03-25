@@ -1,59 +1,90 @@
-const http = require('http');
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
+// Local dev server: serves static files + proxies /api/search to CDX API
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+var url = require('url');
 
-const PORT = 8888;
+var PORT = 3000;
 
-const server = http.createServer((req, res) => {
-  // Proxy CDX API requests
-  if (req.url.startsWith('/api/cdx?')) {
-    const queryStr = req.url.slice('/api/cdx?'.length);
-    const parsed = new URLSearchParams(queryStr);
-    // CDX API needs decoded values (slashes, colons, etc.)
-    const parts = [];
-    for (const [k, v] of parsed) parts.push(`${k}=${v}`);
-    const cdxUrl = `https://web.archive.org/cdx/search/cdx?${parts.join('&')}`;
+var server = http.createServer(function(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
-    const cdxParsed = new URL(cdxUrl);
-    const options = {
-      hostname: cdxParsed.hostname,
-      path: cdxParsed.pathname + cdxParsed.search,
-      timeout: 20000,
+  var parsed = url.parse(req.url, true);
+
+  if (parsed.pathname === '/api/search') {
+    var searchUrl = (parsed.query.url || '').replace(/^https?:\/\//, '');
+    if (!searchUrl) { res.writeHead(400); res.end('{"error":"Missing url"}'); return; }
+
+    var cdxUrl = 'https://web.archive.org/cdx/search/cdx'
+      + '?url=' + encodeURIComponent(searchUrl)
+      + '&output=json&fl=timestamp,original,statuscode,mimetype'
+      + '&filter=statuscode:200&collapse=timestamp:6&limit=500';
+
+    https.get(cdxUrl, {
       headers: { 'User-Agent': 'InternetArchaeologyDig/1.0' }
-    };
-    https.get(options, (proxyRes) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Content-Type', 'application/json');
-      res.writeHead(proxyRes.statusCode);
-      proxyRes.pipe(res);
-    }).on('error', (err) => {
-      res.writeHead(502, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: err.message }));
+    }, function(cdxRes) {
+      var body = '';
+      cdxRes.on('data', function(c) { body += c; });
+      cdxRes.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        try {
+          var data = JSON.parse(body);
+          if (!Array.isArray(data) || data.length <= 1) {
+            res.end('{"captures":0,"snapshots":[]}');
+            return;
+          }
+          var rows = data.slice(1);
+          var html = rows.filter(function(r) {
+            var m = (r[3] || '').toLowerCase();
+            return m === '' || m.indexOf('html') >= 0 || m.indexOf('text/') >= 0;
+          });
+          if (html.length === 0) { res.end('{"captures":0,"snapshots":[]}'); return; }
+
+          var snaps = html.map(function(r) {
+            return { ts: r[0], url: r[1], wayback: 'https://web.archive.org/web/' + r[0] + '/' + r[1] };
+          });
+          var samples = [snaps[0]];
+          if (snaps.length > 4) {
+            samples.push(snaps[Math.floor(snaps.length * 0.25)]);
+            samples.push(snaps[Math.floor(snaps.length * 0.5)]);
+            samples.push(snaps[Math.floor(snaps.length * 0.75)]);
+          } else if (snaps.length > 2) {
+            samples.push(snaps[Math.floor(snaps.length / 2)]);
+          }
+          if (snaps.length > 1) samples.push(snaps[snaps.length - 1]);
+
+          res.end(JSON.stringify({
+            captures: snaps.length,
+            first: snaps[0].ts,
+            last: snaps[snaps.length - 1].ts,
+            samples: samples
+          }));
+        } catch(e) {
+          res.end('{"captures":0,"snapshots":[]}');
+        }
+      });
+    }).on('error', function() {
+      res.end('{"captures":0,"snapshots":[]}');
     });
     return;
   }
 
-  // Serve static files
-  let filePath = req.url === '/' ? '/index.html' : req.url;
-  filePath = path.join(__dirname, filePath);
+  // Static files
+  var filePath = parsed.pathname === '/' ? '/index.html' : parsed.pathname;
+  var fullPath = path.join(__dirname, filePath);
+  var ext = path.extname(fullPath);
+  var types = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json' };
 
-  const ext = path.extname(filePath);
-  const mimeTypes = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
-  const contentType = mimeTypes[ext] || 'application/octet-stream';
-
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(404);
-      res.end('Not found');
-      return;
-    }
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(content);
+  fs.readFile(fullPath, function(err, data) {
+    if (err) { res.writeHead(404); res.end('Not found'); return; }
+    res.setHeader('Content-Type', types[ext] || 'text/plain');
+    res.end(data);
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`\n  ~ * ~ Internet Archaeology Dig ~ * ~`);
-  console.log(`  Open http://localhost:${PORT} in your browser\n`);
+server.listen(PORT, function() {
+  console.log('Dev server running at http://localhost:' + PORT);
 });

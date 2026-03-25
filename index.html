@@ -4,573 +4,638 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>~ * ~ Internet Archaeology Dig ~ * ~</title>
+<title>Internet Archaeology - Find Your Forgotten Accounts</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Comic Sans MS', 'Comic Sans', cursive;
-  color: #00ff00;
-  background: #000011;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.starfield {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: -1;
-  background:
-    radial-gradient(1px 1px at 10% 20%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 30% 80%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 50% 10%, #ff0 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 70% 60%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 90% 40%, #0ff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 15% 55%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 45% 35%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 75% 85%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 5% 70%, #ff0 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 85% 15%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 60% 45%, #0ff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 25% 25%, #fff 0.5px, transparent 1px),
-    #000011;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
-  position: relative;
+  padding: 40px 20px;
 }
 
-h1 {
+header {
   text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
   font-size: 28px;
-  color: #ff00ff;
-  text-shadow: 2px 2px #000, 0 0 10px #ff00ff;
-  margin: 20px 0;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin-bottom: 6px;
 }
 
-.subtitle {
-  text-align: center;
-  color: #ffff00;
-  font-size: 14px;
-  margin-bottom: 20px;
-  font-style: italic;
+header p {
+  color: #8b949e;
+  font-size: 15px;
 }
 
-.panel {
-  background: rgba(0, 0, 40, 0.8);
-  border: 2px solid #00ff00;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 16px 0;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-}
-
-.panel-title {
-  text-align: center;
-  color: #00ffff;
-  font-size: 20px;
-  margin-bottom: 16px;
-  text-shadow: 0 0 8px #00ffff;
-}
-
-.input-group {
+.search-box {
   display: flex;
-  gap: 10px;
-  margin: 16px 0;
+  gap: 8px;
+  margin-bottom: 32px;
 }
 
-.input-group input {
+.search-box input {
   flex: 1;
-  padding: 12px;
-  font-family: 'Comic Sans MS', cursive;
+  padding: 12px 16px;
   font-size: 16px;
-  background: #000033;
-  color: #00ff00;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #f0f6fc;
   outline: none;
 }
 
-.input-group input::placeholder { color: #006600; }
-.input-group input:focus { box-shadow: 0 0 10px #00ff00; }
+.search-box input:focus {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(56,139,253,0.15);
+}
 
-.dig-button {
+.search-box button {
   padding: 12px 24px;
-  font-family: 'Comic Sans MS', cursive;
   font-size: 16px;
-  font-weight: bold;
-  background: linear-gradient(180deg, #ff00ff, #990099);
+  font-weight: 600;
+  background: #238636;
   color: #fff;
-  border: 2px solid #ff66ff;
-  border-radius: 4px;
+  border: 1px solid rgba(240,246,252,0.1);
+  border-radius: 6px;
   cursor: pointer;
-  text-shadow: 1px 1px #000;
 }
 
-.dig-button:hover { background: linear-gradient(180deg, #ff33ff, #cc00cc); box-shadow: 0 0 15px #ff00ff; }
+.search-box button:hover { background: #2ea043; }
+.search-box button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.marquee-bar {
-  background: linear-gradient(90deg, #ff0000, #ff6600, #ffff00, #00ff00, #0000ff, #8b00ff);
-  color: #fff;
-  padding: 4px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  text-shadow: 1px 1px #000;
-  margin: 12px 0;
-  animation: rainbow-scroll 3s linear infinite;
+/* Progress */
+#progress { display: none; margin-bottom: 24px; }
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #8b949e;
 }
 
-@keyframes rainbow-scroll {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+.progress-bar-bg {
+  height: 6px;
+  background: #21262d;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
-.blink { animation: blink-text 1s step-end infinite; }
-@keyframes blink-text { 50% { opacity: 0; } }
-
-.score-banner {
-  background: linear-gradient(135deg, #220044, #440088);
-  border: 3px solid #ff00ff;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  margin: 16px 0;
-  box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
+.progress-bar-fill {
+  height: 100%;
+  background: #58a6ff;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
 }
 
-.player-title {
-  font-size: 24px;
-  color: #ff00ff;
-  text-shadow: 0 0 12px #ff00ff;
-  margin: 8px 0;
+.scanning-label {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6e7681;
+  font-style: italic;
 }
 
-.total-score { color: #ffff00; font-size: 18px; }
-.total-score .number { font-size: 28px; font-weight: bold; }
+/* Results */
+#results { display: none; }
 
-.artifact-card {
-  background: rgba(0, 0, 60, 0.6);
-  border: 1px solid #0066ff;
-  border-radius: 8px;
-  padding: 14px;
-  margin: 10px 0;
+.summary-bar {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.summary-bar .found-count {
+  color: #3fb950;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.result-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
   transition: border-color 0.2s;
 }
 
-.artifact-card:hover { border-color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
-.artifact-card.confirmed { border-color: #00ff00; background: rgba(0, 40, 0, 0.6); }
+.result-card.found {
+  border-left: 3px solid #3fb950;
+}
 
-.card-header {
+.result-card.not-found {
+  opacity: 0.5;
+  border-left: 3px solid #30363d;
+}
+
+.result-card .card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.result-card .platform-icon {
+  font-size: 22px;
+  width: 30px;
+  text-align: center;
+}
+
+.result-card .platform-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #f0f6fc;
+  flex: 1;
+}
+
+.result-card .platform-era {
+  font-size: 12px;
+  color: #6e7681;
+}
+
+.result-card .badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.badge-found {
+  background: rgba(63,185,80,0.15);
+  color: #3fb950;
+}
+
+.badge-none {
+  background: rgba(110,118,129,0.15);
+  color: #6e7681;
+}
+
+.capture-info {
+  margin: 8px 0 4px 40px;
+  font-size: 14px;
+  color: #8b949e;
+}
+
+.capture-info strong {
+  color: #c9d1d9;
+}
+
+.snapshot-links {
+  margin: 10px 0 0 40px;
+  display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.platform-label { font-size: 16px; color: #00ffff; }
-.badge { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-.badge-confirmed { background: #003300; color: #00ff00; border: 1px solid #00ff00; }
-.badge-explore { background: #333300; color: #ffff00; border: 1px solid #ffff00; }
-
-.card-links { margin-top: 8px; }
-.card-links a {
-  color: #00ccff;
+.snapshot-links a {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #58a6ff;
+  background: rgba(56,139,253,0.1);
+  border: 1px solid rgba(56,139,253,0.3);
+  border-radius: 6px;
   text-decoration: none;
-  display: inline-block;
-  margin-right: 16px;
+}
+
+.snapshot-links a:hover {
+  background: rgba(56,139,253,0.2);
+  border-color: #58a6ff;
+}
+
+.not-found-section {
+  margin-top: 32px;
+}
+
+.not-found-section h3 {
   font-size: 14px;
-}
-.card-links a:hover { color: #00ffff; text-decoration: underline; }
-
-.card-era { color: #888; font-size: 12px; margin-top: 4px; }
-
-.footer {
-  text-align: center;
-  margin-top: 30px;
-  padding: 20px;
-  color: #666;
-  font-size: 12px;
-  border-top: 1px solid #333;
+  color: #6e7681;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
-.guestbook-link { color: #ff6699; cursor: pointer; text-decoration: underline; margin: 8px 0; }
-.hit-counter {
-  font-family: 'Courier New', monospace;
-  background: #000;
-  color: #0f0;
-  padding: 4px 12px;
-  border: 1px inset #666;
-  display: inline-block;
-  margin: 8px 0;
-}
-
-#results-area { display: none; }
-
-.dig-again-btn {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  font-family: 'Comic Sans MS', cursive;
-  font-size: 14px;
-  background: #003300;
-  color: #00ff00;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.dig-again-btn:hover { background: #004400; }
-
-.progress-section { display: none; }
-.platform-row {
+.not-found-list {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
-  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.platform-row .icon { width: 24px; text-align: center; }
-.platform-row .name { width: 120px; color: #00ffff; }
-.platform-row .status { color: #888; font-size: 12px; }
-.platform-row .status.found { color: #00ff00; font-weight: bold; }
-.platform-row .status.searching { color: #ffff00; }
 
-@keyframes sparkle-fade {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-20px) scale(0.5); }
+.not-found-chip {
+  font-size: 12px;
+  color: #6e7681;
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 12px;
+  padding: 4px 10px;
+}
+
+/* API warning */
+.api-warning {
+  background: rgba(210,153,34,0.1);
+  border: 1px solid rgba(210,153,34,0.3);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #d2992a;
+}
+
+.api-warning a { color: #e3b341; }
+
+footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #21262d;
+  font-size: 12px;
+  color: #484f58;
+}
+
+footer a { color: #58a6ff; text-decoration: none; }
+
+@media (max-width: 500px) {
+  .search-box { flex-direction: column; }
+  .search-box button { width: 100%; }
+  .container { padding: 24px 16px; }
+  header h1 { font-size: 22px; }
 }
 </style>
 </head>
 <body>
-<div class="starfield"></div>
+
 <div class="container">
+  <header>
+    <h1>Internet Archaeology</h1>
+    <p>Search the Wayback Machine for your old accounts across 20+ platforms</p>
+  </header>
 
-  <h1>~ * ~ Internet Archaeology Dig ~ * ~</h1>
-  <p class="subtitle">Unearthing your embarrassing digital past since 2026</p>
-
-  <div class="marquee-bar">
-    <span class="blink">*** NEW ***</span>
-    Now searching <span id="visitor-count-marquee">12</span> ancient platforms!
-    <span class="blink">*** NEW ***</span>
+  <div id="api-warning" class="api-warning" style="display:none">
+    Running in lite mode (limited results). For full search, <a href="https://github.com/ashleywolf/internet-archaeology#deploy-to-vercel" target="_blank">deploy to Vercel</a>.
   </div>
 
-  <!-- SEARCH FORM -->
-  <div id="search-form" class="panel">
-    <h2 class="panel-title">~ Begin Your Excavation ~</h2>
-    <p style="text-align:center; color:#ccc; margin-bottom:12px;">
-      Enter the username(s) you used in the early internet days.
-      We'll search the Wayback Machine for your digital fossils.
-    </p>
-    <div class="input-group">
-      <input type="text" id="username-input" placeholder="xX_DarkAngel_Xx, sk8rboi2003" autocomplete="off">
-      <button class="dig-button" id="dig-btn" onclick="handleDig()">Start Digging</button>
+  <div class="search-box">
+    <input type="text" id="username" placeholder="Enter a username..." autocomplete="off" autofocus>
+    <button id="dig-btn" onclick="startDig()">Search</button>
+  </div>
+
+  <div id="progress">
+    <div class="progress-header">
+      <span id="progress-label">Searching...</span>
+      <span id="progress-count">0 / 0</span>
     </div>
-    <p style="text-align:center; color:#666; font-size:11px; margin-top:8px;">
-      Separate multiple usernames with commas. We search GeoCities, MySpace, LiveJournal, and more!
-    </p>
-  </div>
-
-  <!-- PROGRESS SECTION -->
-  <div id="progress-section" class="panel progress-section">
-    <h2 class="panel-title">~ Excavation In Progress ~</h2>
-    <p style="text-align:center; color:#ffff00;">Searching the ruins of Web 1.0 for <span id="search-name" style="color:#ff00ff"></span>...</p>
-    <div id="platform-progress"></div>
-  </div>
-
-  <!-- RESULTS -->
-  <div id="results-area">
-    <div class="score-banner" id="score-banner">
-      <div style="color:#ccc; font-size:14px;">Your excavation rank:</div>
-      <div class="player-title" id="player-title"></div>
-      <div class="total-score">Cringe Score: <span class="number" id="total-score">0</span></div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
     </div>
-
-    <div class="panel">
-      <h2 class="panel-title">~ Discovered Artifacts ~</h2>
-      <div id="results-container"></div>
-    </div>
-
-    <button class="dig-again-btn" onclick="resetDig()">Dig Again</button>
+    <div class="scanning-label" id="scanning-label"></div>
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <p style="color:#ff6699">Best viewed in Netscape Navigator 4.0 at 800x600 resolution</p>
-    <p class="guestbook-link" onclick="alert('The guestbook has been offline since 2004. Sorry!')">Sign my Guestbook!</p>
-    <div class="hit-counter">Visitors: <span id="hit-counter">000000</span></div>
-    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v9</p>
-  </div>
+  <div id="results"></div>
 
+  <footer>
+    <a href="https://github.com/ashleywolf/internet-archaeology" target="_blank">Source on GitHub</a> | v10
+  </footer>
 </div>
 
 <script>
-// ===== VISITOR COUNTER =====
-var visitorNum = Math.floor(Math.random() * 900000) + 100000;
-document.getElementById('hit-counter').textContent = String(visitorNum).padStart(6, '0');
+(function() {
+  // ---- Platform definitions ----
+  var PLATFORMS = [
+    { name: 'MySpace', icon: '🎵', era: '2003-2009',
+      urls: ['myspace.com/{u}'] },
+    { name: 'LiveJournal', icon: '📓', era: '1999-2012',
+      urls: ['{u}.livejournal.com', 'livejournal.com/users/{u}', 'users.livejournal.com/{u}'] },
+    { name: 'Xanga', icon: '📝', era: '2000-2009',
+      urls: ['xanga.com/{u}'] },
+    { name: 'Friendster', icon: '🤝', era: '2002-2011',
+      urls: ['friendster.com/{u}'] },
+    { name: 'GeoCities', icon: '🌐', era: '1994-2009',
+      urls: ['geocities.com/{u}'] },
+    { name: 'Angelfire', icon: '🔥', era: '1996-2014',
+      urls: ['angelfire.com/{u}'] },
+    { name: 'Tripod', icon: '🏗', era: '1995-2009',
+      urls: ['{u}.tripod.com'] },
+    { name: 'DeviantArt', icon: '🎨', era: '2000-now',
+      urls: ['{u}.deviantart.com', 'deviantart.com/{u}'] },
+    { name: 'Photobucket', icon: '📸', era: '2003-now',
+      urls: ['photobucket.com/user/{u}'] },
+    { name: 'hi5', icon: '🖐', era: '2003-2017',
+      urls: ['hi5.com/{u}'] },
+    { name: 'Bebo', icon: '💬', era: '2005-2013',
+      urls: ['bebo.com/{u}'] },
+    { name: 'Neopets', icon: '🐾', era: '1999-now',
+      urls: ['neopets.com/userlookup.phtml?user={u}', 'neopets.com/~{u}'] },
+    { name: 'Last.fm', icon: '🎧', era: '2002-now',
+      urls: ['last.fm/user/{u}', 'lastfm.com/user/{u}'] },
+    { name: 'Flickr', icon: '📷', era: '2004-now',
+      urls: ['flickr.com/photos/{u}'] },
+    { name: 'Tumblr', icon: '📱', era: '2007-now',
+      urls: ['{u}.tumblr.com'] },
+    { name: 'Twitter', icon: '🐦', era: '2006-now',
+      urls: ['twitter.com/{u}'] },
+    { name: 'Digg', icon: '📰', era: '2004-2012',
+      urls: ['digg.com/users/{u}'] },
+    { name: 'Delicious', icon: '🔖', era: '2003-2017',
+      urls: ['del.icio.us/{u}', 'delicious.com/{u}'] },
+    { name: 'StumbleUpon', icon: '🎲', era: '2001-2018',
+      urls: ['stumbleupon.com/stumbler/{u}'] },
+    { name: 'Google+', icon: '🔴', era: '2011-2019',
+      urls: ['plus.google.com/+{u}'] },
+    { name: 'Vine', icon: '🌿', era: '2013-2017',
+      urls: ['vine.co/{u}'] },
+    { name: 'AOL Hometown', icon: '📡', era: '1996-2008',
+      urls: ['hometown.aol.com/{u}', 'members.aol.com/{u}'] },
+    { name: 'Orkut', icon: '🟣', era: '2004-2014',
+      urls: ['orkut.com/Profile?uid={u}'] },
+    { name: 'Blogger', icon: '🅱', era: '1999-now',
+      urls: ['{u}.blogspot.com'] }
+  ];
 
-// ===== PLATFORMS =====
-var PLATFORMS = [
-  { id: 'geocities', name: 'GeoCities', icon: '🏚', era: '1994-2009', year: 2003, bonus: 200,
-    urls: function(u) { return ['www.geocities.com/' + u]; } },
-  { id: 'myspace', name: 'MySpace', icon: '🎵', era: '2003-2012', year: 2008, bonus: 100,
-    urls: function(u) { return ['www.myspace.com/' + u]; } },
-  { id: 'angelfire', name: 'Angelfire', icon: '🔥', era: '1996-2010', year: 2003, bonus: 150,
-    urls: function(u) { return ['www.angelfire.com/ca/' + u]; } },
-  { id: 'tripod', name: 'Tripod', icon: '📷', era: '1995-2010', year: 2003, bonus: 150,
-    urls: function(u) { return [u + '.tripod.com']; } },
-  { id: 'livejournal', name: 'LiveJournal', icon: '📓', era: '1999-2015', year: 2005, bonus: 100,
-    urls: function(u) { return [u + '.livejournal.com']; } },
-  { id: 'xanga', name: 'Xanga', icon: '✍', era: '2000-2013', year: 2006, bonus: 150,
-    urls: function(u) { return ['www.xanga.com/' + u]; } },
-  { id: 'deviantart', name: 'DeviantArt', icon: '🎨', era: '2000-present', year: 2008, bonus: 50,
-    urls: function(u) { return [u + '.deviantart.com']; } },
-  { id: 'blogspot', name: 'Blogspot', icon: '📝', era: '2003-present', year: 2008, bonus: 50,
-    urls: function(u) { return [u + '.blogspot.com']; } },
-  { id: 'aol', name: 'AOL Hometown', icon: '📧', era: '1997-2008', year: 2003, bonus: 200,
-    urls: function(u) { return ['members.aol.com/' + u]; } },
-  { id: 'freewebs', name: 'Freewebs', icon: '🕸', era: '2001-2012', year: 2006, bonus: 100,
-    urls: function(u) { return ['www.freewebs.com/' + u]; } },
-  { id: 'neopets', name: 'Neopets', icon: '🐱', era: '1999-present', year: 2006, bonus: 100,
-    urls: function(u) { return ['www.neopets.com/userlookup.phtml?user=' + u]; } },
-  { id: 'bolt', name: 'Bolt.com', icon: '⚡', era: '1996-2008', year: 2004, bonus: 300,
-    urls: function(u) { return ['www.bolt.com/' + u]; } }
-];
+  var apiMode = 'unknown'; // 'full', 'lite', or 'unknown'
+  var isSearching = false;
 
-// ===== SEARCH =====
-function checkWayback(url, timestamp) {
-  var endpoint = 'https://archive.org/wayback/available?url=' + url + '&timestamp=' + timestamp;
-  return fetch(endpoint, { signal: AbortSignal.timeout(8000) })
-    .then(function(resp) {
-      if (!resp.ok) return null;
-      return resp.json();
-    })
-    .then(function(data) {
-      if (!data) return null;
-      var snap = data.archived_snapshots && data.archived_snapshots.closest;
-      if (snap && snap.available && snap.status === '200') {
-        return { timestamp: snap.timestamp, waybackUrl: snap.url };
-      }
-      return null;
-    })
-    .catch(function() { return null; });
-}
+  // ---- Detect API mode ----
+  function detectApi() {
+    return fetch('/api/search?url=example.com')
+      .then(function(r) { return r.ok || r.status === 400; })
+      .then(function(available) {
+        apiMode = available ? 'full' : 'lite';
+        return apiMode;
+      })
+      .catch(function() {
+        apiMode = 'lite';
+        return apiMode;
+      });
+  }
 
-function searchOnePlatform(platform, username) {
-  var urls = platform.urls(username);
-  var ts = String(platform.year) + '0101';
-  var promises = urls.map(function(url) { return checkWayback(url, ts); });
-  
-  return Promise.all(promises).then(function(results) {
-    for (var i = 0; i < results.length; i++) {
-      if (results[i]) {
-        return {
-          platform: platform,
-          username: username,
-          url: urls[i],
-          confirmed: true,
-          waybackUrl: results[i].waybackUrl,
-          calendarUrl: 'https://web.archive.org/web/*/' + urls[i]
-        };
+  // ---- Search functions ----
+
+  // Full mode: call our API proxy -> CDX API
+  function searchUrlFull(url) {
+    return fetch('/api/search?url=' + encodeURIComponent(url))
+      .then(function(r) { return r.json(); })
+      .catch(function() { return { captures: 0 }; });
+  }
+
+  // Lite mode: call Wayback Availability API directly (has CORS, but unreliable)
+  function searchUrlLite(url) {
+    return fetch('https://archive.org/wayback/available?url=' + url + '&timestamp=20050101')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.archived_snapshots && data.archived_snapshots.closest) {
+          var snap = data.archived_snapshots.closest;
+          return {
+            captures: 1,
+            first: snap.timestamp,
+            last: snap.timestamp,
+            samples: [{ ts: snap.timestamp, url: snap.url, wayback: snap.url }]
+          };
+        }
+        return { captures: 0 };
+      })
+      .catch(function() { return { captures: 0 }; });
+  }
+
+  function searchUrl(url) {
+    if (apiMode === 'full') return searchUrlFull(url);
+    return searchUrlLite(url);
+  }
+
+  // ---- Build search queue ----
+  function buildSearchQueue(username) {
+    var queue = [];
+    for (var i = 0; i < PLATFORMS.length; i++) {
+      var p = PLATFORMS[i];
+      for (var j = 0; j < p.urls.length; j++) {
+        var url = p.urls[j].replace(/\{u\}/g, username);
+        queue.push({ platform: p, url: url });
       }
     }
-    // Not confirmed by API, return explore link anyway
-    return {
-      platform: platform,
-      username: username,
-      url: urls[0],
-      confirmed: false,
-      waybackUrl: 'https://web.archive.org/web/' + ts + '/' + urls[0],
-      calendarUrl: 'https://web.archive.org/web/*/' + urls[0]
-    };
-  });
-}
-
-// ===== MAIN DIG =====
-var digging = false;
-
-function handleDig() {
-  if (digging) return;
-  
-  var input = document.getElementById('username-input').value.trim();
-  if (!input) {
-    document.getElementById('username-input').style.borderColor = '#ff0000';
-    setTimeout(function() {
-      document.getElementById('username-input').style.borderColor = '';
-    }, 1500);
-    return;
+    return queue;
   }
-  
-  digging = true;
-  var usernames = input.split(',').map(function(s) { return s.trim().toLowerCase(); }).filter(function(s) { return s.length > 0; });
-  
-  // Show progress
-  document.getElementById('search-form').style.display = 'none';
-  document.getElementById('results-area').style.display = 'none';
-  var progressEl = document.getElementById('progress-section');
-  progressEl.style.display = '';
-  progressEl.className = 'panel';
-  document.getElementById('search-name').textContent = usernames.join(', ');
-  
-  // Build progress rows
-  var progressHTML = '';
-  for (var i = 0; i < PLATFORMS.length; i++) {
-    var p = PLATFORMS[i];
-    progressHTML += '<div class="platform-row" id="row-' + p.id + '">' +
-      '<span class="icon">' + p.icon + '</span>' +
-      '<span class="name">' + p.name + '</span>' +
-      '<span class="status searching" id="stat-' + p.id + '">Waiting...</span>' +
-      '</div>';
-  }
-  document.getElementById('platform-progress').innerHTML = progressHTML;
-  
-  // Search all platforms
-  var allResults = [];
-  var idx = 0;
-  
-  function searchNext() {
-    if (idx >= PLATFORMS.length) {
-      // Done searching, show results
-      setTimeout(function() { showResults(allResults); }, 400);
+
+  // ---- Main search ----
+  function startDig() {
+    if (isSearching) return;
+
+    var username = document.getElementById('username').value.trim();
+    if (!username) {
+      document.getElementById('username').focus();
       return;
     }
-    
-    var platform = PLATFORMS[idx];
-    var statEl = document.getElementById('stat-' + platform.id);
-    if (statEl) {
-      statEl.textContent = 'Searching...';
-      statEl.className = 'status searching';
+
+    isSearching = true;
+    document.getElementById('dig-btn').disabled = true;
+
+    var queue = buildSearchQueue(username);
+    var total = queue.length;
+    var completed = 0;
+    var platformResults = {}; // platform name -> best result
+    var foundPlatforms = [];
+    var notFoundPlatforms = [];
+
+    // Show progress
+    var progressEl = document.getElementById('progress');
+    var resultsEl = document.getElementById('results');
+    progressEl.style.display = 'block';
+    resultsEl.style.display = 'block';
+    resultsEl.innerHTML = '';
+    updateProgress(0, total, '');
+
+    // Concurrent search with pool
+    var concurrency = (apiMode === 'full') ? 4 : 2;
+    var idx = 0;
+    var active = 0;
+
+    function next() {
+      while (active < concurrency && idx < queue.length) {
+        var item = queue[idx];
+        idx++;
+        active++;
+        (function(searchItem) {
+          searchUrl(searchItem.url).then(function(result) {
+            active--;
+            completed++;
+            updateProgress(completed, total, searchItem.platform.name);
+
+            if (result && result.captures > 0) {
+              var name = searchItem.platform.name;
+              var existing = platformResults[name];
+              if (!existing || result.captures > existing.captures) {
+                platformResults[name] = {
+                  platform: searchItem.platform,
+                  url: searchItem.url,
+                  captures: result.captures,
+                  first: result.first,
+                  last: result.last,
+                  samples: result.samples || []
+                };
+              }
+            }
+
+            if (completed === total) {
+              finishSearch(platformResults);
+            } else {
+              next();
+            }
+          });
+        })(item);
+      }
     }
-    
-    // Search with first username
-    searchOnePlatform(platform, usernames[0]).then(function(result) {
-      allResults.push(result);
-      if (statEl) {
-        if (result.confirmed) {
-          statEl.textContent = 'FOUND!';
-          statEl.className = 'status found';
+
+    next();
+  }
+
+  function updateProgress(done, total, currentPlatform) {
+    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = done + ' / ' + total;
+    document.getElementById('progress-label').textContent = done < total ? 'Searching...' : 'Done';
+    if (currentPlatform) {
+      document.getElementById('scanning-label').textContent = 'Checking ' + currentPlatform + '...';
+    }
+  }
+
+  function finishSearch(platformResults) {
+    isSearching = false;
+    document.getElementById('dig-btn').disabled = false;
+    document.getElementById('scanning-label').textContent = '';
+
+    var found = [];
+    var notFound = [];
+
+    for (var i = 0; i < PLATFORMS.length; i++) {
+      var p = PLATFORMS[i];
+      if (platformResults[p.name]) {
+        found.push(platformResults[p.name]);
+      } else {
+        notFound.push(p);
+      }
+    }
+
+    // Sort found by capture count (most captures first)
+    found.sort(function(a, b) { return b.captures - a.captures; });
+
+    renderResults(found, notFound);
+  }
+
+  // ---- Rendering ----
+
+  function formatTs(ts) {
+    if (!ts || ts.length < 8) return '';
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var y = ts.substring(0, 4);
+    var m = parseInt(ts.substring(4, 6), 10);
+    var d = parseInt(ts.substring(6, 8), 10);
+    return months[m - 1] + ' ' + d + ', ' + y;
+  }
+
+  function yearFromTs(ts) {
+    if (!ts || ts.length < 4) return '?';
+    return ts.substring(0, 4);
+  }
+
+  function renderResults(found, notFound) {
+    var html = '';
+
+    // Summary
+    html += '<div class="summary-bar">';
+    if (found.length > 0) {
+      html += '<span class="found-count">' + found.length + '</span>';
+      html += ' platform' + (found.length === 1 ? '' : 's') + ' with archived captures found';
+      html += ' <span style="color:#6e7681">(out of ' + PLATFORMS.length + ' searched)</span>';
+    } else {
+      html += 'No archived captures found across ' + PLATFORMS.length + ' platforms. ';
+      html += 'This username may not have been captured by the Wayback Machine, ';
+      html += 'or may have used different names on different sites.';
+    }
+    html += '</div>';
+
+    // Found cards
+    for (var i = 0; i < found.length; i++) {
+      var r = found[i];
+      html += '<div class="result-card found">';
+      html += '<div class="card-header">';
+      html += '<span class="platform-icon">' + r.platform.icon + '</span>';
+      html += '<span class="platform-name">' + r.platform.name + '</span>';
+      html += '<span class="platform-era">' + r.platform.era + '</span>';
+      html += '<span class="badge badge-found">' + r.captures + ' capture' + (r.captures === 1 ? '' : 's') + '</span>';
+      html += '</div>';
+
+      // Capture date range
+      html += '<div class="capture-info">';
+      if (r.first && r.last && r.first !== r.last) {
+        html += 'Archived from <strong>' + formatTs(r.first) + '</strong>';
+        html += ' to <strong>' + formatTs(r.last) + '</strong>';
+      } else if (r.first) {
+        html += 'Captured on <strong>' + formatTs(r.first) + '</strong>';
+      }
+      html += '</div>';
+
+      // Snapshot links
+      if (r.samples && r.samples.length > 0) {
+        html += '<div class="snapshot-links">';
+        if (r.samples.length >= 2) {
+          html += '<a href="' + r.samples[0].wayback + '" target="_blank" rel="noopener">Earliest snapshot (' + yearFromTs(r.samples[0].ts) + ')</a>';
+          html += '<a href="' + r.samples[r.samples.length - 1].wayback + '" target="_blank" rel="noopener">Latest snapshot (' + yearFromTs(r.samples[r.samples.length - 1].ts) + ')</a>';
         } else {
-          statEl.textContent = 'Done';
-          statEl.className = 'status';
+          html += '<a href="' + r.samples[0].wayback + '" target="_blank" rel="noopener">View snapshot</a>';
         }
+        // All captures link
+        html += '<a href="https://web.archive.org/web/*/' + r.url + '" target="_blank" rel="noopener">All captures</a>';
+        html += '</div>';
       }
-      idx++;
-      setTimeout(searchNext, 150);
-    }).catch(function() {
-      allResults.push(null);
-      if (statEl) {
-        statEl.textContent = 'Error';
-        statEl.className = 'status';
+
+      html += '</div>';
+    }
+
+    // Not found — compact list
+    if (notFound.length > 0) {
+      html += '<div class="not-found-section">';
+      html += '<h3>No captures found on ' + notFound.length + ' other platforms:</h3>';
+      html += '<div class="not-found-list">';
+      for (var j = 0; j < notFound.length; j++) {
+        html += '<span class="not-found-chip">' + notFound[j].icon + ' ' + notFound[j].name + '</span>';
       }
-      idx++;
-      setTimeout(searchNext, 150);
-    });
-  }
-  
-  searchNext();
-}
-
-function showResults(results) {
-  document.getElementById('progress-section').style.display = 'none';
-  document.getElementById('results-area').style.display = 'block';
-  
-  var confirmed = results.filter(function(r) { return r && r.confirmed; });
-  var unconfirmed = results.filter(function(r) { return r && !r.confirmed; });
-  
-  // Score
-  var totalScore = 0;
-  for (var i = 0; i < results.length; i++) {
-    if (results[i]) {
-      totalScore += results[i].confirmed ? (150 + results[i].platform.bonus) : (50 + results[i].platform.bonus);
+      html += '</div>';
+      html += '</div>';
     }
+
+    document.getElementById('results').innerHTML = html;
   }
-  
-  // Title
-  var title = '🏄 Mystery Surfer 🏄';
-  if (confirmed.length >= 6) title = '🦴 Certified Internet Fossil 🦴';
-  else if (confirmed.length >= 4) title = '🏺 Digital Archaeologist 🏺';
-  else if (confirmed.length >= 2) title = '⛏ Web Archaeologist ⛏';
-  else if (confirmed.length >= 1) title = '👀 Casual Lurker 👀';
-  
-  document.getElementById('player-title').textContent = title;
-  document.getElementById('total-score').textContent = String(totalScore);
-  
-  // Build results HTML
-  var html = '';
-  
-  if (confirmed.length > 0) {
-    html += '<h3 style="color:#00ff00; margin:12px 0 8px;">** CONFIRMED ARTIFACTS (' + confirmed.length + ') **</h3>';
-    for (var i = 0; i < confirmed.length; i++) {
-      html += makeCardHTML(confirmed[i]);
+
+  // ---- Init ----
+  document.getElementById('username').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) startDig();
+  });
+
+  // Detect API availability
+  detectApi().then(function(mode) {
+    if (mode === 'lite') {
+      document.getElementById('api-warning').style.display = 'block';
     }
-  }
-  
-  if (unconfirmed.length > 0) {
-    html += '<h3 style="color:#ffff00; margin:20px 0 8px;">~ Dig Sites to Explore (' + unconfirmed.length + ') ~</h3>';
-    if (confirmed.length === 0) {
-      html += '<p style="color:#999; font-size:13px; margin-bottom:12px;">The Wayback Machine API didn\'t confirm any captures right now (it\'s unreliable), but your pages might still be archived! Click the links below to check.</p>';
-    }
-    for (var i = 0; i < unconfirmed.length; i++) {
-      html += makeCardHTML(unconfirmed[i]);
-    }
-  }
-  
-  document.getElementById('results-container').innerHTML = html;
-  digging = false;
-}
+  });
 
-function makeCardHTML(r) {
-  var cardClass = r.confirmed ? 'artifact-card confirmed' : 'artifact-card';
-  var badge = r.confirmed
-    ? '<span class="badge badge-confirmed">VERIFIED FIND</span>'
-    : '';
-  
-  var calLink = r.calendarUrl;
-  var snapLink = r.waybackUrl;
-  
-  return '<div class="' + cardClass + '">' +
-    '<div class="card-header">' +
-      '<span class="platform-label">' + r.platform.icon + ' ' + r.platform.name + '</span>' +
-      badge +
-    '</div>' +
-    '<div class="card-era">Era: ' + r.platform.era + ' | ' + r.url + '</div>' +
-    '<div class="card-links">' +
-      '<a href="' + calLink + '" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:#003366;border:1px solid #00ccff;border-radius:4px;color:#00ccff;font-size:14px;margin:4px 4px 4px 0;">Browse all captures</a>' +
-      '<a href="' + snapLink + '" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:#333300;border:1px solid #ffff00;border-radius:4px;color:#ffff00;font-size:14px;margin:4px 0;">' + (r.confirmed ? 'View archived page' : 'Try this snapshot') + '</a>' +
-    '</div>' +
-  '</div>';
-}
-
-function resetDig() {
-  document.getElementById('results-area').style.display = 'none';
-  document.getElementById('progress-section').style.display = 'none';
-  document.getElementById('search-form').style.display = 'block';
-  document.getElementById('username-input').value = '';
-  document.getElementById('username-input').focus();
-}
-
-// ===== SPARKLE CURSOR =====
-document.addEventListener('mousemove', function(e) {
-  var sparkle = document.createElement('div');
-  var chars = ['*', '+', '.'];
-  var colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff6699', '#00ff00'];
-  sparkle.textContent = chars[Math.floor(Math.random() * chars.length)];
-  sparkle.style.cssText = 'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;color:' +
-    colors[Math.floor(Math.random() * colors.length)] + ';font-size:' + (8 + Math.random() * 12) +
-    'px;pointer-events:none;z-index:9999;animation:sparkle-fade 0.8s ease-out forwards;';
-  document.body.appendChild(sparkle);
-  setTimeout(function() { sparkle.remove(); }, 800);
-});
-
-// Focus input on load
-window.addEventListener('load', function() {
-  document.getElementById('username-input').focus();
-});
+  // Expose startDig globally for the button onclick
+  window.startDig = startDig;
+})();
 </script>
+
 </body>
 </html>

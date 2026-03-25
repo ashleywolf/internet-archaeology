@@ -1,0 +1,9 @@
+{
+  "name": "internet-archaeology",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Search the Wayback Machine for your old internet accounts across 20+ platforms",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
