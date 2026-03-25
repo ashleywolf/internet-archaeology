@@ -513,6 +513,7 @@ body {
     <h2 class="panel-title">~ Excavation In Progress ~</h2>
     <p class="dig-status-header">Searching the ruins of Web 1.0 for <span id="dig-username-display" style="color:#ffff00"></span>...</p>
     <div id="platform-list"></div>
+    <div id="dig-log" style="margin-top:12px; padding:8px; background:#000; border:1px solid #333; font-family:monospace; font-size:11px; color:#0f0; max-height:150px; overflow-y:auto; display:none;"></div>
   </div>
 
   <!-- RESULTS SECTION -->
@@ -666,28 +667,39 @@ document.getElementById('visitor-count-marquee').textContent = visitorNum.toLoca
 
 // ===== WAYBACK AVAILABILITY API SEARCH =====
 // Uses archive.org/wayback/available which has CORS support.
-// We search sequentially and throttle to avoid 429 rate limits.
 const AVAIL_API = 'https://archive.org/wayback/available';
 
-// Throttle: wait between requests to avoid 429s
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function digLog(msg) {
+  console.log('[dig] ' + msg);
+  const el = document.getElementById('dig-log');
+  if (el) {
+    el.style.display = '';
+    el.innerHTML += msg + '<br>';
+    el.scrollTop = el.scrollHeight;
+  }
+}
 
 async function probeUrl(url, timestamp) {
   const ts = timestamp ? `&timestamp=${timestamp}` : '';
-  // Don't use encodeURIComponent - it encodes / to %2F which the Wayback API rejects
   const endpoint = `${AVAIL_API}?url=${url}${ts}`;
+  digLog(`Probing: ${url} @${timestamp}`);
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     const resp = await fetch(endpoint, { signal: controller.signal });
     clearTimeout(timeout);
+    digLog(`  Response: ${resp.status} for ${url}`);
     if (resp.status === 429) {
+      digLog('  Rate limited! Waiting 3s...');
       await wait(3000);
       const retry = await fetch(endpoint, { signal: AbortSignal.timeout(12000) });
-      if (!retry.ok) return null;
+      if (!retry.ok) { digLog('  Retry failed: ' + retry.status); return null; }
       const data = await retry.json();
       const snap = data?.archived_snapshots?.closest;
       if (snap && snap.available && snap.status === '200') {
+        digLog('  FOUND on retry! ' + snap.url);
         return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
       }
       return null;
@@ -696,10 +708,13 @@ async function probeUrl(url, timestamp) {
     const data = await resp.json();
     const snap = data?.archived_snapshots?.closest;
     if (snap && snap.available && snap.status === '200') {
+      digLog('  FOUND! ' + snap.url);
       return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
     }
+    digLog('  No snapshot');
     return null;
   } catch (e) {
+    digLog('  Error: ' + (e.name === 'AbortError' ? 'timeout' : e.message));
     return null;
   }
 }
@@ -878,17 +893,19 @@ async function startDig() {
   document.getElementById('intro-section').style.display = 'none';
   document.getElementById('results-section').style.display = 'none';
   document.getElementById('dig-section').style.display = '';
+  document.getElementById('dig-log').innerHTML = '';
 
   document.getElementById('dig-username-display').textContent = usernames.join(', ');
   document.getElementById('dig-btn').disabled = true;
 
+  digLog('Starting dig for: ' + usernames.join(', '));
   renderPlatformList();
 
   try {
-    // Search platforms with small delays between each to avoid rate-limiting
     const allResults = [];
     for (let idx = 0; idx < PLATFORMS.length; idx++) {
       const platform = PLATFORMS[idx];
+      digLog('--- Searching ' + platform.name + ' ---');
       updatePlatformStatus(platform.id, 'searching', 'Searching...');
       try {
         const result = await searchPlatform(platform, usernames);
@@ -899,22 +916,22 @@ async function startDig() {
         }
         allResults.push(result);
       } catch (e) {
-        console.error(`Error searching ${platform.name}:`, e);
+        digLog(platform.name + ' ERROR: ' + e.message);
         updatePlatformStatus(platform.id, 'error', 'Error');
         allResults.push(null);
       }
-      // Brief delay between platforms
       if (idx < PLATFORMS.length - 1) await new Promise(r => setTimeout(r, 300));
     }
 
-    // Short pause before showing results
+    const foundCount = allResults.filter(r => r !== null).length;
+    digLog('Dig complete! Found ' + foundCount + ' artifact(s).');
     await new Promise(r => setTimeout(r, 600));
 
     document.getElementById('dig-section').style.display = 'none';
     document.getElementById('results-section').style.display = '';
     renderResults(allResults);
   } catch (e) {
-    console.error('Dig failed:', e);
+    digLog('FATAL: ' + e.message);
     document.getElementById('dig-section').style.display = 'none';
     document.getElementById('results-section').style.display = '';
     document.getElementById('artifacts-container').innerHTML = `
