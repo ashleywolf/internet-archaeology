@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~ * ~ Internet Archaeology Dig ~ * ~</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+  color: #00ff00;
+  background: #000011;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== STARFIELD ===== */
+.starfield {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1;
+  background:
+    radial-gradient(1px 1px at 10% 20%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 30% 80%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 50% 10%, #ff0 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 70% 60%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 90% 40%, #0ff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 15% 55%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 45% 35%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 65% 90%, #ff0 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 85% 15%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 25% 70%, #0ff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 5% 45%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 55% 65%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 75% 25%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 95% 85%, #ff0 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 35% 5%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 20% 95%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 60% 50%, #0ff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 80% 75%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 40% 15%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 2% 88%, #ff0 0.5px, transparent 1px);
+  background-color: #000011;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* ===== MARQUEE ===== */
+.marquee-container {
+  background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-scroll 15s linear infinite;
+  font-size: 14px;
+  color: #000;
+  font-weight: bold;
+  font-family: 'Times New Roman', serif;
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ===== BLINK ===== */
+.blink {
+  animation: blink-anim 1s steps(2, start) infinite;
+}
+@keyframes blink-anim {
+  to { visibility: hidden; }
+}
+
+/* ===== MAIN CONTAINER ===== */
+.main-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== HEADER ===== */
+.site-header {
+  text-align: center;
+  padding: 30px 0;
+  border-bottom: 3px ridge #ff00ff;
+  margin-bottom: 20px;
+}
+
+.site-header h1 {
+  font-size: 32px;
+  color: #ff00ff;
+  text-shadow: 2px 2px #000, 0 0 10px #ff00ff;
+  margin-bottom: 5px;
+}
+
+.site-header .subtitle {
+  color: #00ffff;
+  font-size: 14px;
+  font-family: 'Times New Roman', serif;
+}
+
+.construction-bar {
+  height: 8px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff0 0px, #ff0 10px,
+    #000 10px, #000 20px
+  );
+  margin: 15px 0;
+}
+
+/* ===== PANELS ===== */
+.panel {
+  border: 3px outset #666;
+  background: rgba(0, 0, 30, 0.85);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.panel-title {
+  color: #ffff00;
+  font-size: 18px;
+  margin-bottom: 15px;
+  text-decoration: underline;
+  text-shadow: 1px 1px #000;
+}
+
+/* ===== INTRO SECTION ===== */
+#intro-section .intro-text {
+  color: #00ff00;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+#intro-section .intro-text span.hot {
+  color: #ff6699;
+}
+
+/* ===== INPUT FORM ===== */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  color: #00ffff;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #00ff00;
+  background: #000022;
+  border: 2px inset #444;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #00ff00;
+  box-shadow: 0 0 8px #00ff00;
+}
+
+.input-group .hint {
+  color: #888;
+  font-size: 11px;
+  margin-top: 4px;
+  font-family: 'Times New Roman', serif;
+}
+
+.dig-button {
+  display: inline-block;
+  padding: 10px 30px;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(180deg, #ffff00, #ff8800);
+  border: 3px outset #ffaa00;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dig-button:hover {
+  background: linear-gradient(180deg, #ffff66, #ffaa33);
+}
+
+.dig-button:active {
+  border-style: inset;
+}
+
+.dig-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== DIG PROGRESS ===== */
+#dig-section {
+  display: none;
+}
+
+.dig-status-header {
+  color: #ff00ff;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.platform-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.platform-icon {
+  width: 20px;
+  text-align: center;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.platform-name {
+  width: 130px;
+  color: #00ffff;
+  flex-shrink: 0;
+}
+
+.progress-track {
+  flex: 1;
+  height: 16px;
+  background: #111;
+  border: 2px inset #333;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: repeating-linear-gradient(
+    90deg,
+    #0066ff 0px, #0066ff 8px,
+    #0044cc 8px, #0044cc 16px
+  );
+  transition: width 0.3s ease;
+}
+
+.progress-fill.searching {
+  width: 60%;
+  animation: search-pulse 1.5s ease-in-out infinite;
+}
+
+.progress-fill.found {
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    #00cc00 0px, #00cc00 8px,
+    #009900 8px, #009900 16px
+  );
+}
+
+.progress-fill.not-found {
+  width: 100%;
+  background: #333;
+}
+
+@keyframes search-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.platform-status {
+  width: 100px;
+  text-align: right;
+  margin-left: 8px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+}
+
+.platform-status.found { color: #00ff00; }
+.platform-status.not-found { color: #666; }
+.platform-status.searching { color: #ffff00; }
+.platform-status.error { color: #ff4444; }
+
+/* ===== RESULTS ===== */
+#results-section {
+  display: none;
+}
+
+.score-banner {
+  text-align: center;
+  padding: 20px;
+  border: 3px ridge #ff00ff;
+  background: linear-gradient(180deg, rgba(255,0,255,0.15), rgba(0,0,0,0));
+  margin-bottom: 20px;
+}
+
+.score-banner .title-label {
+  color: #00ffff;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.score-banner .player-title {
+  color: #ff00ff;
+  font-size: 28px;
+  text-shadow: 2px 2px #000, 0 0 15px #ff00ff;
+  margin-bottom: 10px;
+}
+
+.score-banner .total-score {
+  color: #ffff00;
+  font-size: 20px;
+}
+
+.score-banner .total-score .number {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.no-results-msg {
+  text-align: center;
+  color: #888;
+  font-size: 16px;
+  padding: 30px;
+}
+
+.artifact-card {
+  border: 2px outset #555;
+  background: rgba(0, 0, 50, 0.6);
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.artifact-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+.artifact-card .platform-label {
+  color: #ff6699;
+  font-size: 16px;
+}
+
+.artifact-card .cringe-score {
+  color: #ffff00;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+}
+
+.artifact-card .artifact-details {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.artifact-card .detail-row {
+  display: flex;
+  gap: 8px;
+}
+
+.artifact-card .detail-label {
+  color: #888;
+  min-width: 100px;
+}
+
+.artifact-card .detail-value {
+  color: #00ff00;
+}
+
+.artifact-card .detail-value a {
+  color: #00ccff;
+  text-decoration: underline;
+}
+
+.artifact-card .detail-value a:hover {
+  color: #66eeff;
+}
+
+.artifact-card .captures-bar {
+  margin-top: 10px;
+  height: 6px;
+  background: #111;
+  border: 1px inset #333;
+}
+
+.artifact-card .captures-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+}
+
+/* ===== RETRY BUTTON ===== */
+.dig-again-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 20px;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 14px;
+  color: #000;
+  background: linear-gradient(180deg, #00ffff, #0088aa);
+  border: 3px outset #00aacc;
+  cursor: pointer;
+}
+
+.dig-again-btn:hover {
+  background: linear-gradient(180deg, #66ffff, #00aacc);
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid #333;
+  margin-top: 30px;
+  font-size: 11px;
+  color: #666;
+  font-family: 'Times New Roman', serif;
+}
+
+.site-footer a {
+  color: #888;
+}
+
+.hit-counter {
+  display: inline-block;
+  background: #000;
+  border: 2px inset #444;
+  padding: 2px 8px;
+  font-family: 'Courier New', monospace;
+  color: #00ff00;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.guestbook-link {
+  color: #ff6699;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .site-header h1 { font-size: 22px; }
+  .platform-name { width: 90px; font-size: 11px; }
+  .platform-status { width: 70px; }
+  .main-container { padding: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+
+<div class="marquee-container">
+  <span class="marquee-text">
+    ~ * ~ Welcome to the INTERNET ARCHAEOLOGY DIG ~ * ~ Unearth your digital fossils from the ancient web ~ * ~ GeoCities * MySpace * Angelfire * LiveJournal * Xanga * and more! ~ * ~ You are visitor #<span id="visitor-count-marquee">???</span> ~ * ~
+  </span>
+</div>
+
+<div class="main-container">
+
+  <header class="site-header">
+    <h1>~ * ~ Internet Archaeology Dig ~ * ~</h1>
+    <p class="subtitle">Unearthing your embarrassing digital past since 2026</p>
+    <div class="construction-bar"></div>
+  </header>
+
+  <!-- INTRO / INPUT SECTION -->
+  <div id="intro-section" class="panel">
+    <h2 class="panel-title">~ Begin Your Excavation ~</h2>
+    <p class="intro-text">
+      Remember that <span class="hot">GeoCities</span> page you made in 1998? The one with the
+      flame GIFs and a MIDI of "Sandstorm" autoplaying? Or your <span class="hot">MySpace</span>
+      profile with the custom CSS that crashed Internet Explorer?
+    </p>
+    <p class="intro-text">
+      Enter your old username(s) below and we'll search the
+      <span class="blink">Wayback Machine</span> to dig up whatever's left.
+      You might not be ready for what we find.
+    </p>
+
+    <div class="input-group">
+      <label for="username-input">Enter your old username(s):</label>
+      <input type="text" id="username-input" placeholder="xX_DarkAngel_Xx, sk8rboi2003" autocomplete="off">
+      <p class="hint">Separate multiple usernames with commas. We'll search all of them across 12 platforms.</p>
+    </div>
+
+    <button class="dig-button" id="dig-btn" onclick="startDig()">
+      Start Digging
+    </button>
+  </div>
+
+  <!-- DIG PROGRESS SECTION -->
+  <div id="dig-section" class="panel">
+    <h2 class="panel-title">~ Excavation In Progress ~</h2>
+    <p class="dig-status-header">Searching the ruins of Web 1.0 for <span id="dig-username-display" style="color:#ffff00"></span>...</p>
+    <div id="platform-list"></div>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div id="results-section">
+    <div class="score-banner" id="score-banner">
+      <div class="title-label">Your excavation rank:</div>
+      <div class="player-title" id="player-title"></div>
+      <div class="total-score">Cringe Score: <span class="number" id="total-score">0</span></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title">~ Discovered Artifacts ~</h2>
+      <div id="artifacts-container"></div>
+    </div>
+
+    <div style="text-align:center">
+      <button class="dig-again-btn" onclick="resetDig()">Dig Again</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="construction-bar"></div>
+    <p>Best viewed in <b>Netscape Navigator 4.0</b> at <b>800x600</b> resolution</p>
+    <p class="guestbook-link" onclick="alert('The guestbook has been offline since 2004. Sorry!')">Sign my Guestbook!</p>
+    <div class="hit-counter">Visitors: <span id="hit-counter">000000</span></div>
+    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026</p>
+  </footer>
+
+</div>
+
+<script>
+// ===== PLATFORM DEFINITIONS =====
+// Each platform has URL patterns and probe timestamps that work best with
+// the Wayback Machine Availability API (archive.org/wayback/available).
+// The API needs www. prefixes and era-appropriate timestamps to find captures.
+const PLATFORMS = [
+  {
+    id: 'geocities',
+    name: 'GeoCities',
+    icon: '\u{1F3DA}',
+    urls: u => [
+      `www.geocities.com/${u}`,
+      `geocities.com/${u}`,
+      `www.geocities.com/~${u}`,
+    ],
+    probeYears: [1998, 2000, 2002, 2004, 2006, 2008],
+    rarityBonus: 200,
+    era: '1994-2009',
+  },
+  {
+    id: 'myspace',
+    name: 'MySpace',
+    icon: '\u{1F3B5}',
+    urls: u => [`www.myspace.com/${u}`, `myspace.com/${u}`],
+    probeYears: [2004, 2006, 2008, 2010, 2012],
+    rarityBonus: 100,
+    era: '2003-2012',
+  },
+  {
+    id: 'angelfire',
+    name: 'Angelfire',
+    icon: '\u{1F525}',
+    urls: u => [
+      `www.angelfire.com/games/${u}`,
+      `www.angelfire.com/ca/${u}`,
+      `www.angelfire.com/punk/${u}`,
+      `www.angelfire.com/art/${u}`,
+      `www.angelfire.com/ny/${u}`,
+    ],
+    probeYears: [1999, 2001, 2003, 2005, 2007],
+    rarityBonus: 150,
+    era: '1996-2010',
+  },
+  {
+    id: 'tripod',
+    name: 'Tripod',
+    icon: '\u{1F4F7}',
+    urls: u => [`members.tripod.com/~${u}`, `${u}.tripod.com`, `members.tripod.com/${u}`],
+    probeYears: [1999, 2001, 2003, 2005, 2007],
+    rarityBonus: 150,
+    era: '1995-2010',
+  },
+  {
+    id: 'livejournal',
+    name: 'LiveJournal',
+    icon: '\u{1F4D3}',
+    urls: u => [`${u}.livejournal.com`, `www.livejournal.com/users/${u}`],
+    probeYears: [2001, 2003, 2005, 2007, 2009],
+    rarityBonus: 100,
+    era: '1999-2015',
+  },
+  {
+    id: 'xanga',
+    name: 'Xanga',
+    icon: '\u{270D}',
+    urls: u => [`www.xanga.com/${u}`, `xanga.com/${u}`],
+    probeYears: [2002, 2004, 2006, 2008, 2010],
+    rarityBonus: 150,
+    era: '2000-2013',
+  },
+  {
+    id: 'deviantart',
+    name: 'DeviantArt',
+    icon: '\u{1F3A8}',
+    urls: u => [`${u}.deviantart.com`, `www.deviantart.com/${u}`],
+    probeYears: [2003, 2005, 2007, 2009, 2012],
+    rarityBonus: 50,
+    era: '2000-present',
+  },
+  {
+    id: 'blogspot',
+    name: 'Blogspot',
+    icon: '\u{1F4DD}',
+    urls: u => [`${u}.blogspot.com`],
+    probeYears: [2004, 2006, 2008, 2010, 2013],
+    rarityBonus: 50,
+    era: '2003-present',
+  },
+  {
+    id: 'aol',
+    name: 'AOL Hometown',
+    icon: '\u{1F4E7}',
+    urls: u => [`hometown.aol.com/${u}`, `members.aol.com/${u}`],
+    probeYears: [1999, 2001, 2003, 2005, 2007],
+    rarityBonus: 200,
+    era: '1997-2008',
+  },
+  {
+    id: 'freewebs',
+    name: 'Freewebs',
+    icon: '\u{1F578}',
+    urls: u => [`www.freewebs.com/${u}`, `freewebs.com/${u}`],
+    probeYears: [2003, 2005, 2007, 2009, 2011],
+    rarityBonus: 100,
+    era: '2001-2012',
+  },
+  {
+    id: 'neopets',
+    name: 'Neopets',
+    icon: '\u{1F431}',
+    urls: u => [`www.neopets.com/userlookup.phtml?user=${u}`],
+    probeYears: [2002, 2004, 2006, 2008, 2010],
+    rarityBonus: 100,
+    era: '1999-present',
+  },
+  {
+    id: 'bolt',
+    name: 'Bolt.com',
+    icon: '\u{26A1}',
+    urls: u => [`www.bolt.com/${u}`, `bolt.com/${u}`],
+    probeYears: [1999, 2001, 2003, 2005, 2007],
+    rarityBonus: 300,
+    era: '1996-2008',
+  },
+];
+
+// ===== HIT COUNTER =====
+const visitorNum = Math.floor(Math.random() * 900000) + 100000;
+document.getElementById('hit-counter').textContent = String(visitorNum).padStart(6, '0');
+document.getElementById('visitor-count-marquee').textContent = visitorNum.toLocaleString();
+
+// ===== WAYBACK AVAILABILITY API SEARCH =====
+// Uses archive.org/wayback/available which has CORS support.
+// We probe multiple timestamps per URL to find the earliest capture.
+const AVAIL_API = 'https://archive.org/wayback/available';
+
+async function probeUrl(url, timestamp) {
+  const ts = timestamp ? `&timestamp=${timestamp}0101` : '';
+  const endpoint = `${AVAIL_API}?url=${encodeURIComponent(url)}${ts}`;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const resp = await fetch(endpoint, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const snap = data?.archived_snapshots?.closest;
+    if (snap && snap.available && snap.status === '200') {
+      return {
+        url: data.url,
+        timestamp: snap.timestamp,
+        waybackUrl: snap.url,
+      };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function searchPlatform(platform, usernames) {
+  // For each username x URL pattern x probe year, fire all probes in parallel
+  const probes = [];
+  for (const username of usernames) {
+    const urlPatterns = platform.urls(username);
+    for (const url of urlPatterns) {
+      for (const year of platform.probeYears) {
+        probes.push(probeUrl(url, year).then(r => r ? { ...r, username, url } : null));
+      }
+    }
+  }
+
+  const results = await Promise.all(probes);
+  const hits = results.filter(r => r !== null);
+
+  if (hits.length === 0) return null;
+
+  // Find the earliest capture
+  hits.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  const earliest = hits[0];
+
+  // Deduplicate to count unique timestamps found
+  const uniqueTimestamps = new Set(hits.map(h => h.timestamp.substring(0, 8)));
+
+  return {
+    url: earliest.url,
+    username: earliest.username,
+    platform,
+    earliest: earliest.timestamp,
+    latest: hits[hits.length - 1].timestamp,
+    waybackUrl: earliest.waybackUrl,
+    captures: uniqueTimestamps.size,
+    calendarUrl: `https://web.archive.org/web/*/${earliest.url}`,
+  };
+}
+
+// ===== SCORING =====
+function calculateScore(result) {
+  if (!result) return 0;
+  let score = 100; // base
+  // Age bonus: +10 per year before 2005
+  const yearStr = result.earliest.substring(0, 4);
+  const year = parseInt(yearStr);
+  if (year < 2005) {
+    score += (2005 - year) * 10;
+  }
+  // Rarity bonus
+  score += result.platform.rarityBonus;
+  // Multiple captures bonus
+  if (result.captures > 10) score += 50;
+  return score;
+}
+
+function getTitle(totalScore) {
+  if (totalScore >= 1500) return { title: 'Certified Internet Fossil', emoji: '\u{1F9B4}' };
+  if (totalScore >= 1000) return { title: 'Digital Archaeologist', emoji: '\u{1F3FA}' };
+  if (totalScore >= 500) return { title: 'Web Archaeologist', emoji: '\u{26CF}' };
+  if (totalScore >= 100) return { title: 'Casual Lurker', emoji: '\u{1F440}' };
+  return { title: 'Internet Newborn', emoji: '\u{1F476}' };
+}
+
+function formatTimestamp(ts) {
+  if (!ts || ts.length < 8) return 'Unknown';
+  return `${ts.substring(0, 4)}-${ts.substring(4, 6)}-${ts.substring(6, 8)}`;
+}
+
+function getWaybackUrl(timestamp, originalUrl) {
+  return `https://web.archive.org/web/${timestamp}/${originalUrl}`;
+}
+
+// ===== UI RENDERING =====
+function renderPlatformList() {
+  const container = document.getElementById('platform-list');
+  container.innerHTML = '';
+  for (const p of PLATFORMS) {
+    const row = document.createElement('div');
+    row.className = 'platform-row';
+    row.id = `platform-row-${p.id}`;
+    row.innerHTML = `
+      <span class="platform-icon">${p.icon}</span>
+      <span class="platform-name">${p.name}</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-${p.id}"></div>
+      </div>
+      <span class="platform-status searching" id="status-${p.id}">Waiting...</span>
+    `;
+    container.appendChild(row);
+  }
+}
+
+function updatePlatformStatus(platformId, state, detail) {
+  const fill = document.getElementById(`progress-${platformId}`);
+  const status = document.getElementById(`status-${platformId}`);
+  fill.className = 'progress-fill ' + state;
+  status.className = 'platform-status ' + state;
+  status.textContent = detail;
+}
+
+function renderResults(results) {
+  const container = document.getElementById('artifacts-container');
+  container.innerHTML = '';
+
+  const found = results.filter(r => r !== null);
+
+  if (found.length === 0) {
+    container.innerHTML = `
+      <div class="no-results-msg">
+        No artifacts found. Either you were careful with your digital footprint,
+        or the Wayback Machine didn't capture your pages.<br><br>
+        Try other usernames you might have used!
+      </div>
+    `;
+    document.getElementById('score-banner').style.display = 'none';
+    return;
+  }
+
+  // Calculate scores and sort
+  const scored = found.map(r => ({ ...r, score: calculateScore(r) }));
+  scored.sort((a, b) => b.score - a.score);
+  const totalScore = scored.reduce((sum, r) => sum + r.score, 0);
+  const titleInfo = getTitle(totalScore);
+
+  // Update score banner
+  document.getElementById('score-banner').style.display = '';
+  document.getElementById('player-title').textContent = `${titleInfo.emoji} ${titleInfo.title} ${titleInfo.emoji}`;
+  document.getElementById('total-score').textContent = totalScore.toLocaleString();
+
+  // Render artifact cards
+  for (const r of scored) {
+    const card = document.createElement('div');
+    card.className = 'artifact-card';
+    const waybackLink = r.waybackUrl;
+    const calendarLink = r.calendarUrl;
+    const maxCaptures = 10;
+    const barWidth = Math.min(100, (r.captures / maxCaptures) * 100);
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="platform-label">${r.platform.icon} ${r.platform.name}</span>
+        <span class="cringe-score">+${r.score} pts</span>
+      </div>
+      <div class="artifact-details">
+        <div class="detail-row">
+          <span class="detail-label">Username:</span>
+          <span class="detail-value">${r.username}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">URL:</span>
+          <span class="detail-value">${r.url}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">First seen:</span>
+          <span class="detail-value">${formatTimestamp(r.earliest)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Last seen:</span>
+          <span class="detail-value">${formatTimestamp(r.latest)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">View it:</span>
+          <span class="detail-value"><a href="${waybackLink}" target="_blank" rel="noopener">Open in Wayback Machine</a></span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">All captures:</span>
+          <span class="detail-value"><a href="${calendarLink}" target="_blank" rel="noopener">Browse full timeline</a></span>
+        </div>
+      </div>
+      <div class="captures-bar"><div class="captures-bar-fill" style="width:${barWidth}%"></div></div>
+    `;
+    container.appendChild(card);
+  }
+}
+
+// ===== MAIN DIG LOGIC =====
+let isDigging = false;
+
+async function startDig() {
+  if (isDigging) return;
+  const input = document.getElementById('username-input').value.trim();
+  if (!input) {
+    document.getElementById('username-input').style.borderColor = '#ff0000';
+    document.getElementById('username-input').style.boxShadow = '0 0 8px #ff0000';
+    setTimeout(() => {
+      document.getElementById('username-input').style.borderColor = '';
+      document.getElementById('username-input').style.boxShadow = '';
+    }, 1500);
+    return;
+  }
+
+  isDigging = true;
+  const usernames = input.split(',').map(u => u.trim().toLowerCase()).filter(u => u.length > 0);
+
+  // Show dig section, hide others
+  document.getElementById('intro-section').style.display = 'none';
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('dig-section').style.display = '';
+
+  document.getElementById('dig-username-display').textContent = usernames.join(', ');
+  document.getElementById('dig-btn').disabled = true;
+
+  renderPlatformList();
+
+  // Search all platforms (with slight stagger for visual effect)
+  const results = [];
+  const promises = PLATFORMS.map((platform, idx) => {
+    return new Promise(resolve => {
+      setTimeout(async () => {
+        updatePlatformStatus(platform.id, 'searching', 'Searching...');
+        try {
+          const result = await searchPlatform(platform, usernames);
+          if (result) {
+            updatePlatformStatus(platform.id, 'found', `FOUND! (${result.captures})`);
+          } else {
+            updatePlatformStatus(platform.id, 'not-found', 'Nothing');
+          }
+          resolve(result);
+        } catch (e) {
+          updatePlatformStatus(platform.id, 'error', 'Error');
+          resolve(null);
+        }
+      }, idx * 300); // stagger by 300ms for visual effect
+    });
+  });
+
+  const allResults = await Promise.all(promises);
+
+  // Short pause before showing results
+  await new Promise(r => setTimeout(r, 800));
+
+  document.getElementById('dig-section').style.display = 'none';
+  document.getElementById('results-section').style.display = '';
+  renderResults(allResults);
+
+  isDigging = false;
+  document.getElementById('dig-btn').disabled = false;
+}
+
+function resetDig() {
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('dig-section').style.display = 'none';
+  document.getElementById('intro-section').style.display = '';
+  document.getElementById('username-input').value = '';
+  document.getElementById('username-input').focus();
+}
+
+// ===== CURSOR SPARKLE TRAIL =====
+document.addEventListener('mousemove', (e) => {
+  const sparkle = document.createElement('div');
+  sparkle.textContent = ['*', '+', '.', '\u2729', '\u2726'][Math.floor(Math.random() * 5)];
+  sparkle.style.cssText = `
+    position: fixed;
+    left: ${e.clientX}px;
+    top: ${e.clientY}px;
+    color: ${['#ff00ff', '#00ffff', '#ffff00', '#ff6699', '#00ff00'][Math.floor(Math.random() * 5)]};
+    font-size: ${8 + Math.random() * 12}px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: sparkle-fade 0.8s ease-out forwards;
+  `;
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 800);
+});
+
+// Add sparkle keyframes
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes sparkle-fade {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(${Math.random() > 0.5 ? '' : '-'}${5 + Math.random() * 15}px, -${10 + Math.random() * 20}px) scale(0.3); }
+  }
+`;
+document.head.appendChild(style);
+
+// Focus the input on load
+window.addEventListener('load', () => {
+  document.getElementById('username-input').focus();
+});
+</script>
+
+</body>
+</html>
