@@ -665,8 +665,10 @@ const visitorNum = Math.floor(Math.random() * 900000) + 100000;
 document.getElementById('hit-counter').textContent = String(visitorNum).padStart(6, '0');
 document.getElementById('visitor-count-marquee').textContent = visitorNum.toLocaleString();
 
-// ===== WAYBACK AVAILABILITY API SEARCH =====
-// Uses archive.org/wayback/available which has CORS support.
+// ===== WAYBACK SEARCH ENGINE =====
+// The Wayback Availability API (archive.org/wayback/available) has CORS headers
+// but returns inconsistent results and aggressively rate-limits. We use it as a
+// bonus confirmation, but the game always shows exploration links regardless.
 const AVAIL_API = 'https://archive.org/wayback/available';
 
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -682,67 +684,46 @@ function digLog(msg) {
 }
 
 async function probeUrl(url, timestamp) {
-  const ts = timestamp ? `&timestamp=${timestamp}` : '';
-  const endpoint = `${AVAIL_API}?url=${url}${ts}`;
-  digLog(`Probing: ${url} @${timestamp}`);
+  const ts = timestamp ? '&timestamp=' + timestamp : '';
+  const endpoint = AVAIL_API + '?url=' + url + ts;
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-    const resp = await fetch(endpoint, { signal: controller.signal });
-    clearTimeout(timeout);
-    digLog(`  Response: ${resp.status} for ${url}`);
-    if (resp.status === 429) {
-      digLog('  Rate limited! Waiting 3s...');
-      await wait(3000);
-      const retry = await fetch(endpoint, { signal: AbortSignal.timeout(12000) });
-      if (!retry.ok) { digLog('  Retry failed: ' + retry.status); return null; }
-      const data = await retry.json();
-      const snap = data?.archived_snapshots?.closest;
-      if (snap && snap.available && snap.status === '200') {
-        digLog('  FOUND on retry! ' + snap.url);
-        return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
-      }
-      return null;
-    }
+    const resp = await fetch(endpoint, { signal: AbortSignal.timeout(8000) });
     if (!resp.ok) return null;
     const data = await resp.json();
     const snap = data?.archived_snapshots?.closest;
     if (snap && snap.available && snap.status === '200') {
-      digLog('  FOUND! ' + snap.url);
       return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
     }
-    digLog('  No snapshot');
     return null;
   } catch (e) {
-    digLog('  Error: ' + (e.name === 'AbortError' ? 'timeout' : e.message));
     return null;
   }
 }
 
 async function searchPlatform(platform, usernames) {
-  // For each username, try all URL patterns in parallel with one timestamp.
-  // This keeps request count low (~2 per platform) and finishes fast.
   const ts = platform.probeYear + '0101';
-
   for (const username of usernames) {
     const urlPatterns = platform.urls(username);
-
-    // Fire all URL patterns for this platform in parallel
     const promises = urlPatterns.map(url => probeUrl(url, ts));
     const results = await Promise.allSettled(promises);
-
     for (let i = 0; i < results.length; i++) {
       if (results[i].status === 'fulfilled' && results[i].value) {
         const r = results[i].value;
         return {
-          ...r,
-          username,
-          url: urlPatterns[i],
-          platform,
-          calendarUrl: `https://web.archive.org/web/*/${urlPatterns[i]}`,
+          ...r, username, url: urlPatterns[i], platform,
+          calendarUrl: 'https://web.archive.org/web/*/' + urlPatterns[i],
+          confirmed: true,
         };
       }
     }
+    // No API confirmation, but still return the first URL pattern as a "possible" result
+    return {
+      url: urlPatterns[0], username, platform,
+      calendarUrl: 'https://web.archive.org/web/*/' + urlPatterns[0],
+      waybackUrl: 'https://web.archive.org/web/' + ts + '/' + urlPatterns[0],
+      timestamp: ts,
+      confirmed: false,
+    };
   }
   return null;
 }
@@ -750,24 +731,19 @@ async function searchPlatform(platform, usernames) {
 // ===== SCORING =====
 function calculateScore(result) {
   if (!result) return 0;
-  let score = 100; // base
-  // Age bonus: +10 per year before 2005
-  const yearStr = result.timestamp.substring(0, 4);
-  const year = parseInt(yearStr);
-  if (year < 2005) {
-    score += (2005 - year) * 10;
-  }
+  let score = 50; // base for unconfirmed
+  if (result.confirmed) score = 150; // confirmed finds score higher
   // Rarity bonus
   score += result.platform.rarityBonus;
   return score;
 }
 
-function getTitle(totalScore) {
-  if (totalScore >= 1500) return { title: 'Certified Internet Fossil', emoji: '\u{1F9B4}' };
-  if (totalScore >= 1000) return { title: 'Digital Archaeologist', emoji: '\u{1F3FA}' };
-  if (totalScore >= 500) return { title: 'Web Archaeologist', emoji: '\u{26CF}' };
-  if (totalScore >= 100) return { title: 'Casual Lurker', emoji: '\u{1F440}' };
-  return { title: 'Internet Newborn', emoji: '\u{1F476}' };
+function getTitle(confirmedCount) {
+  if (confirmedCount >= 6) return { title: 'Certified Internet Fossil', emoji: '\u{1F9B4}' };
+  if (confirmedCount >= 4) return { title: 'Digital Archaeologist', emoji: '\u{1F3FA}' };
+  if (confirmedCount >= 2) return { title: 'Web Archaeologist', emoji: '\u{26CF}' };
+  if (confirmedCount >= 1) return { title: 'Casual Lurker', emoji: '\u{1F440}' };
+  return { title: 'Mystery Surfer', emoji: '\u{1F3C4}' };
 }
 
 function formatTimestamp(ts) {
@@ -807,67 +783,79 @@ function renderResults(results) {
   const container = document.getElementById('artifacts-container');
   container.innerHTML = '';
 
-  const found = results.filter(r => r !== null);
+  const validResults = results.filter(r => r !== null);
+  const confirmed = validResults.filter(r => r.confirmed);
+  const unconfirmed = validResults.filter(r => !r.confirmed);
 
-  if (found.length === 0) {
-    container.innerHTML = `
-      <div class="no-results-msg">
-        No artifacts found. Either you were careful with your digital footprint,
-        or the Wayback Machine didn't capture your pages.<br><br>
-        Try other usernames you might have used!
-      </div>
-    `;
-    document.getElementById('score-banner').style.display = 'none';
-    return;
-  }
-
-  // Calculate scores and sort
-  const scored = found.map(r => ({ ...r, score: calculateScore(r) }));
-  scored.sort((a, b) => b.score - a.score);
-  const totalScore = scored.reduce((sum, r) => sum + r.score, 0);
-  const titleInfo = getTitle(totalScore);
+  // Sort: confirmed first, then unconfirmed
+  const sorted = [...confirmed, ...unconfirmed];
+  const titleInfo = getTitle(confirmed.length);
 
   // Update score banner
   document.getElementById('score-banner').style.display = '';
-  document.getElementById('player-title').textContent = `${titleInfo.emoji} ${titleInfo.title} ${titleInfo.emoji}`;
+  document.getElementById('player-title').textContent = titleInfo.emoji + ' ' + titleInfo.title + ' ' + titleInfo.emoji;
+  const totalScore = sorted.reduce((sum, r) => sum + calculateScore(r), 0);
   document.getElementById('total-score').textContent = totalScore.toLocaleString();
 
-  // Render artifact cards
-  for (const r of scored) {
-    const card = document.createElement('div');
-    card.className = 'artifact-card';
-    const waybackLink = r.waybackUrl;
-    const calendarLink = r.calendarUrl;
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="platform-label">${r.platform.icon} ${r.platform.name}</span>
-        <span class="cringe-score">+${r.score} pts</span>
-      </div>
-      <div class="artifact-details">
-        <div class="detail-row">
-          <span class="detail-label">Username:</span>
-          <span class="detail-value">${r.username}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">URL:</span>
-          <span class="detail-value">${r.url}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Archived:</span>
-          <span class="detail-value">${formatTimestamp(r.timestamp)}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">View it:</span>
-          <span class="detail-value"><a href="${waybackLink}" target="_blank" rel="noopener">Open in Wayback Machine</a></span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">All captures:</span>
-          <span class="detail-value"><a href="${calendarLink}" target="_blank" rel="noopener">Browse full timeline</a></span>
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
+  // Render confirmed finds
+  if (confirmed.length > 0) {
+    const header = document.createElement('h3');
+    header.style.cssText = 'color:#00ff00; margin:12px 0 8px; font-size:16px;';
+    header.textContent = '** CONFIRMED ARTIFACTS (' + confirmed.length + ') **';
+    container.appendChild(header);
+
+    for (const r of confirmed) {
+      container.appendChild(makeCard(r, true));
+    }
   }
+
+  // Render exploration links for unconfirmed
+  if (unconfirmed.length > 0) {
+    const header = document.createElement('h3');
+    header.style.cssText = 'color:#ffff00; margin:20px 0 8px; font-size:16px;';
+    header.textContent = confirmed.length > 0
+      ? '~ Dig Sites to Explore (' + unconfirmed.length + ') ~'
+      : '~ Your Dig Sites (' + unconfirmed.length + ') ~';
+    container.appendChild(header);
+
+    if (confirmed.length === 0) {
+      const note = document.createElement('p');
+      note.style.cssText = 'color:#999; font-size:13px; margin-bottom:12px;';
+      note.textContent = 'The Wayback Machine API could not confirm any captures, but your pages might still be archived! Click the links below to check manually.';
+      container.appendChild(note);
+    }
+
+    for (const r of unconfirmed) {
+      container.appendChild(makeCard(r, false));
+    }
+  }
+}
+
+function makeCard(r, isConfirmed) {
+  const card = document.createElement('div');
+  card.className = 'artifact-card';
+  if (!isConfirmed) card.style.opacity = '0.75';
+  const badge = isConfirmed
+    ? '<span style="color:#00ff00; font-weight:bold;">VERIFIED FIND</span>'
+    : '<span style="color:#ffff00;">Click to explore</span>';
+  const score = calculateScore(r);
+  card.innerHTML =
+    '<div class="card-header">' +
+      '<span class="platform-label">' + r.platform.icon + ' ' + r.platform.name + ' <small>(' + r.platform.era + ')</small></span>' +
+      '<span class="cringe-score">' + badge + ' +' + score + ' pts</span>' +
+    '</div>' +
+    '<div class="artifact-details">' +
+      '<div class="detail-row">' +
+        '<span class="detail-label">URL:</span>' +
+        '<span class="detail-value">' + r.url + '</span>' +
+      '</div>' +
+      '<div class="detail-row">' +
+        '<span class="detail-label">Browse archive:</span>' +
+        '<span class="detail-value"><a href="' + r.calendarUrl + '" target="_blank" rel="noopener">View all captures on Wayback Machine</a></span>' +
+      '</div>' +
+      (isConfirmed ? '<div class="detail-row"><span class="detail-label">Direct link:</span><span class="detail-value"><a href="' + r.waybackUrl + '" target="_blank" rel="noopener">Open archived page</a></span></div>' : '') +
+    '</div>';
+  return card;
 }
 
 // ===== MAIN DIG LOGIC =====
@@ -898,49 +886,39 @@ async function startDig() {
   document.getElementById('dig-username-display').textContent = usernames.join(', ');
   document.getElementById('dig-btn').disabled = true;
 
-  digLog('Starting dig for: ' + usernames.join(', '));
   renderPlatformList();
 
   try {
     const allResults = [];
     for (let idx = 0; idx < PLATFORMS.length; idx++) {
       const platform = PLATFORMS[idx];
-      digLog('--- Searching ' + platform.name + ' ---');
       updatePlatformStatus(platform.id, 'searching', 'Searching...');
       try {
         const result = await searchPlatform(platform, usernames);
-        if (result) {
+        if (result && result.confirmed) {
           updatePlatformStatus(platform.id, 'found', 'FOUND!');
         } else {
-          updatePlatformStatus(platform.id, 'not-found', 'Nothing');
+          updatePlatformStatus(platform.id, 'not-found', 'Explore');
         }
         allResults.push(result);
       } catch (e) {
-        digLog(platform.name + ' ERROR: ' + e.message);
         updatePlatformStatus(platform.id, 'error', 'Error');
         allResults.push(null);
       }
-      if (idx < PLATFORMS.length - 1) await new Promise(r => setTimeout(r, 300));
+      if (idx < PLATFORMS.length - 1) await wait(200);
     }
 
-    const foundCount = allResults.filter(r => r !== null).length;
-    digLog('Dig complete! Found ' + foundCount + ' artifact(s).');
-    await new Promise(r => setTimeout(r, 600));
+    await wait(500);
 
     document.getElementById('dig-section').style.display = 'none';
     document.getElementById('results-section').style.display = '';
     renderResults(allResults);
   } catch (e) {
-    digLog('FATAL: ' + e.message);
     document.getElementById('dig-section').style.display = 'none';
     document.getElementById('results-section').style.display = '';
-    document.getElementById('artifacts-container').innerHTML = `
-      <div class="no-results-msg">
-        Something went wrong during the dig. The Wayback Machine API might be
-        overloaded. Try again in a minute!<br><br>
-        <small style="color:#666">${e.message || 'Unknown error'}</small>
-      </div>
-    `;
+    document.getElementById('artifacts-container').innerHTML =
+      '<div class="no-results-msg">Something went wrong. Try again in a minute!<br><small style="color:#666">' +
+      (e.message || 'Unknown error') + '</small></div>';
     document.getElementById('score-banner').style.display = 'none';
   }
 
