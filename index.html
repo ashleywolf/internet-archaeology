@@ -8,7 +8,6 @@
 <meta http-equiv="Expires" content="0">
 <title>~ * ~ Internet Archaeology Dig ~ * ~</title>
 <style>
-/* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -19,7 +18,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== STARFIELD ===== */
 .starfield {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   z-index: -1;
@@ -31,945 +29,551 @@ body {
     radial-gradient(1px 1px at 90% 40%, #0ff 0.5px, transparent 1px),
     radial-gradient(1px 1px at 15% 55%, #fff 0.5px, transparent 1px),
     radial-gradient(1px 1px at 45% 35%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 65% 90%, #ff0 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 75% 85%, #fff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 5% 70%, #ff0 0.5px, transparent 1px),
     radial-gradient(1px 1px at 85% 15%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 25% 70%, #0ff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 5% 45%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 55% 65%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 75% 25%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 95% 85%, #ff0 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 35% 5%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 20% 95%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 60% 50%, #0ff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 80% 75%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 40% 15%, #fff 0.5px, transparent 1px),
-    radial-gradient(1px 1px at 2% 88%, #ff0 0.5px, transparent 1px);
-  background-color: #000011;
-  animation: twinkle 4s ease-in-out infinite alternate;
+    radial-gradient(1px 1px at 60% 45%, #0ff 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 25% 25%, #fff 0.5px, transparent 1px),
+    #000011;
 }
 
-@keyframes twinkle {
-  0% { opacity: 0.8; }
-  100% { opacity: 1; }
-}
-
-/* ===== MARQUEE ===== */
-.marquee-container {
-  background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
-  padding: 4px 0;
-  overflow: hidden;
-}
-
-.marquee-text {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marquee-scroll 15s linear infinite;
-  font-size: 14px;
-  color: #000;
-  font-weight: bold;
-  font-family: 'Times New Roman', serif;
-}
-
-@keyframes marquee-scroll {
-  0% { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
-}
-
-/* ===== BLINK ===== */
-.blink {
-  animation: blink-anim 1s steps(2, start) infinite;
-}
-@keyframes blink-anim {
-  to { visibility: hidden; }
-}
-
-/* ===== MAIN CONTAINER ===== */
-.main-container {
+.container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
 }
 
-/* ===== HEADER ===== */
-.site-header {
+h1 {
   text-align: center;
-  padding: 30px 0;
-  border-bottom: 3px ridge #ff00ff;
-  margin-bottom: 20px;
-}
-
-.site-header h1 {
-  font-size: 32px;
+  font-size: 28px;
   color: #ff00ff;
   text-shadow: 2px 2px #000, 0 0 10px #ff00ff;
-  margin-bottom: 5px;
+  margin: 20px 0;
 }
 
-.site-header .subtitle {
-  color: #00ffff;
+.subtitle {
+  text-align: center;
+  color: #ffff00;
   font-size: 14px;
-  font-family: 'Times New Roman', serif;
-}
-
-.construction-bar {
-  height: 8px;
-  background: repeating-linear-gradient(
-    -45deg,
-    #ff0 0px, #ff0 10px,
-    #000 10px, #000 20px
-  );
-  margin: 15px 0;
-}
-
-/* ===== PANELS ===== */
-.panel {
-  border: 3px outset #666;
-  background: rgba(0, 0, 30, 0.85);
-  padding: 20px;
   margin-bottom: 20px;
+  font-style: italic;
+}
+
+.panel {
+  background: rgba(0, 0, 40, 0.8);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
 }
 
 .panel-title {
-  color: #ffff00;
-  font-size: 18px;
-  margin-bottom: 15px;
-  text-decoration: underline;
-  text-shadow: 1px 1px #000;
-}
-
-/* ===== INTRO SECTION ===== */
-#intro-section .intro-text {
-  color: #00ff00;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-#intro-section .intro-text span.hot {
-  color: #ff6699;
-}
-
-/* ===== INPUT FORM ===== */
-.input-group {
-  margin-bottom: 15px;
-}
-
-.input-group label {
-  display: block;
+  text-align: center;
   color: #00ffff;
-  font-size: 14px;
-  margin-bottom: 5px;
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
 }
 
 .input-group input {
-  width: 100%;
-  padding: 8px 10px;
-  font-family: 'Courier New', monospace;
+  flex: 1;
+  padding: 12px;
+  font-family: 'Comic Sans MS', cursive;
   font-size: 16px;
+  background: #000033;
   color: #00ff00;
-  background: #000022;
-  border: 2px inset #444;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
   outline: none;
 }
 
-.input-group input:focus {
-  border-color: #00ff00;
-  box-shadow: 0 0 8px #00ff00;
-}
-
-.input-group .hint {
-  color: #888;
-  font-size: 11px;
-  margin-top: 4px;
-  font-family: 'Times New Roman', serif;
-}
+.input-group input::placeholder { color: #006600; }
+.input-group input:focus { box-shadow: 0 0 10px #00ff00; }
 
 .dig-button {
-  display: inline-block;
-  padding: 10px 30px;
+  padding: 12px 24px;
   font-family: 'Comic Sans MS', cursive;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  color: #000;
-  background: linear-gradient(180deg, #ffff00, #ff8800);
-  border: 3px outset #ffaa00;
+  background: linear-gradient(180deg, #ff00ff, #990099);
+  color: #fff;
+  border: 2px solid #ff66ff;
+  border-radius: 4px;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  text-shadow: 1px 1px #000;
 }
 
-.dig-button:hover {
-  background: linear-gradient(180deg, #ffff66, #ffaa33);
-}
+.dig-button:hover { background: linear-gradient(180deg, #ff33ff, #cc00cc); box-shadow: 0 0 15px #ff00ff; }
 
-.dig-button:active {
-  border-style: inset;
-}
-
-.dig-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ===== DIG PROGRESS ===== */
-#dig-section {
-  display: none;
-}
-
-.dig-status-header {
-  color: #ff00ff;
-  font-size: 16px;
-  margin-bottom: 15px;
-}
-
-.platform-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: 13px;
-}
-
-.platform-icon {
-  width: 20px;
+.marquee-bar {
+  background: linear-gradient(90deg, #ff0000, #ff6600, #ffff00, #00ff00, #0000ff, #8b00ff);
+  color: #fff;
+  padding: 4px;
   text-align: center;
-  margin-right: 8px;
-  font-size: 16px;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000;
+  margin: 12px 0;
+  animation: rainbow-scroll 3s linear infinite;
 }
 
-.platform-name {
-  width: 130px;
-  color: #00ffff;
-  flex-shrink: 0;
+@keyframes rainbow-scroll {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
-.progress-track {
-  flex: 1;
-  height: 16px;
-  background: #111;
-  border: 2px inset #333;
-  position: relative;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: repeating-linear-gradient(
-    90deg,
-    #0066ff 0px, #0066ff 8px,
-    #0044cc 8px, #0044cc 16px
-  );
-  transition: width 0.3s ease;
-}
-
-.progress-fill.searching {
-  width: 60%;
-  animation: search-pulse 1.5s ease-in-out infinite;
-}
-
-.progress-fill.found {
-  width: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    #00cc00 0px, #00cc00 8px,
-    #009900 8px, #009900 16px
-  );
-}
-
-.progress-fill.not-found {
-  width: 100%;
-  background: #333;
-}
-
-@keyframes search-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-.platform-status {
-  width: 100px;
-  text-align: right;
-  margin-left: 8px;
-  font-size: 11px;
-  font-family: 'Courier New', monospace;
-}
-
-.platform-status.found { color: #00ff00; }
-.platform-status.not-found { color: #666; }
-.platform-status.searching { color: #ffff00; }
-.platform-status.error { color: #ff4444; }
-
-/* ===== RESULTS ===== */
-#results-section {
-  display: none;
-}
+.blink { animation: blink-text 1s step-end infinite; }
+@keyframes blink-text { 50% { opacity: 0; } }
 
 .score-banner {
-  text-align: center;
+  background: linear-gradient(135deg, #220044, #440088);
+  border: 3px solid #ff00ff;
+  border-radius: 12px;
   padding: 20px;
-  border: 3px ridge #ff00ff;
-  background: linear-gradient(180deg, rgba(255,0,255,0.15), rgba(0,0,0,0));
-  margin-bottom: 20px;
+  text-align: center;
+  margin: 16px 0;
+  box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
 }
 
-.score-banner .title-label {
-  color: #00ffff;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.score-banner .player-title {
+.player-title {
+  font-size: 24px;
   color: #ff00ff;
-  font-size: 28px;
-  text-shadow: 2px 2px #000, 0 0 15px #ff00ff;
-  margin-bottom: 10px;
-}
-
-.score-banner .total-score {
-  color: #ffff00;
-  font-size: 20px;
-}
-
-.score-banner .total-score .number {
-  font-size: 36px;
-  font-weight: bold;
-}
-
-.no-results-msg {
-  text-align: center;
-  color: #888;
-  font-size: 16px;
-  padding: 30px;
-}
-
-.artifact-card {
-  border: 2px outset #555;
-  background: rgba(0, 0, 50, 0.6);
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.artifact-card .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 8px;
-}
-
-.artifact-card .platform-label {
-  color: #ff6699;
-  font-size: 16px;
-}
-
-.artifact-card .cringe-score {
-  color: #ffff00;
-  font-size: 14px;
-  font-family: 'Courier New', monospace;
-}
-
-.artifact-card .artifact-details {
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-.artifact-card .detail-row {
-  display: flex;
-  gap: 8px;
-}
-
-.artifact-card .detail-label {
-  color: #888;
-  min-width: 100px;
-}
-
-.artifact-card .detail-value {
-  color: #00ff00;
-}
-
-.artifact-card .detail-value a {
-  color: #00ccff;
-  text-decoration: underline;
-}
-
-.artifact-card .detail-value a:hover {
-  color: #66eeff;
-}
-
-.artifact-card .captures-bar {
-  margin-top: 10px;
-  height: 6px;
-  background: #111;
-  border: 1px inset #333;
-}
-
-.artifact-card .captures-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
-}
-
-/* ===== RETRY BUTTON ===== */
-.dig-again-btn {
-  display: inline-block;
-  margin-top: 15px;
-  padding: 8px 20px;
-  font-family: 'Comic Sans MS', cursive;
-  font-size: 14px;
-  color: #000;
-  background: linear-gradient(180deg, #00ffff, #0088aa);
-  border: 3px outset #00aacc;
-  cursor: pointer;
-}
-
-.dig-again-btn:hover {
-  background: linear-gradient(180deg, #66ffff, #00aacc);
-}
-
-/* ===== FOOTER ===== */
-.site-footer {
-  text-align: center;
-  padding: 20px 0;
-  border-top: 1px solid #333;
-  margin-top: 30px;
-  font-size: 11px;
-  color: #666;
-  font-family: 'Times New Roman', serif;
-}
-
-.site-footer a {
-  color: #888;
-}
-
-.hit-counter {
-  display: inline-block;
-  background: #000;
-  border: 2px inset #444;
-  padding: 2px 8px;
-  font-family: 'Courier New', monospace;
-  color: #00ff00;
-  font-size: 13px;
+  text-shadow: 0 0 12px #ff00ff;
   margin: 8px 0;
 }
 
-.guestbook-link {
-  color: #ff6699;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 12px;
+.total-score { color: #ffff00; font-size: 18px; }
+.total-score .number { font-size: 28px; font-weight: bold; }
+
+.artifact-card {
+  background: rgba(0, 0, 60, 0.6);
+  border: 1px solid #0066ff;
+  border-radius: 8px;
+  padding: 14px;
+  margin: 10px 0;
+  transition: border-color 0.2s;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  .site-header h1 { font-size: 22px; }
-  .platform-name { width: 90px; font-size: 11px; }
-  .platform-status { width: 70px; }
-  .main-container { padding: 10px; }
+.artifact-card:hover { border-color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+.artifact-card.confirmed { border-color: #00ff00; background: rgba(0, 40, 0, 0.6); }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform-label { font-size: 16px; color: #00ffff; }
+.badge { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.badge-confirmed { background: #003300; color: #00ff00; border: 1px solid #00ff00; }
+.badge-explore { background: #333300; color: #ffff00; border: 1px solid #ffff00; }
+
+.card-links { margin-top: 8px; }
+.card-links a {
+  color: #00ccff;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 16px;
+  font-size: 14px;
+}
+.card-links a:hover { color: #00ffff; text-decoration: underline; }
+
+.card-era { color: #888; font-size: 12px; margin-top: 4px; }
+
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+  color: #666;
+  font-size: 12px;
+  border-top: 1px solid #333;
+}
+
+.guestbook-link { color: #ff6699; cursor: pointer; text-decoration: underline; margin: 8px 0; }
+.hit-counter {
+  font-family: 'Courier New', monospace;
+  background: #000;
+  color: #0f0;
+  padding: 4px 12px;
+  border: 1px inset #666;
+  display: inline-block;
+  margin: 8px 0;
+}
+
+#results-area { display: none; }
+
+.dig-again-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 14px;
+  background: #003300;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dig-again-btn:hover { background: #004400; }
+
+.progress-section { display: none; }
+.platform-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 14px;
+}
+.platform-row .icon { width: 24px; text-align: center; }
+.platform-row .name { width: 120px; color: #00ffff; }
+.platform-row .status { color: #888; font-size: 12px; }
+.platform-row .status.found { color: #00ff00; font-weight: bold; }
+.platform-row .status.searching { color: #ffff00; }
+
+@keyframes sparkle-fade {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-20px) scale(0.5); }
 }
 </style>
 </head>
 <body>
-
 <div class="starfield"></div>
+<div class="container">
 
-<div class="marquee-container">
-  <span class="marquee-text">
-    ~ * ~ Welcome to the INTERNET ARCHAEOLOGY DIG ~ * ~ Unearth your digital fossils from the ancient web ~ * ~ GeoCities * MySpace * Angelfire * LiveJournal * Xanga * and more! ~ * ~ You are visitor #<span id="visitor-count-marquee">???</span> ~ * ~
-  </span>
-</div>
+  <h1>~ * ~ Internet Archaeology Dig ~ * ~</h1>
+  <p class="subtitle">Unearthing your embarrassing digital past since 2026</p>
 
-<div class="main-container">
+  <div class="marquee-bar">
+    <span class="blink">*** NEW ***</span>
+    Now searching <span id="visitor-count-marquee">12</span> ancient platforms!
+    <span class="blink">*** NEW ***</span>
+  </div>
 
-  <header class="site-header">
-    <h1>~ * ~ Internet Archaeology Dig ~ * ~</h1>
-    <p class="subtitle">Unearthing your embarrassing digital past since 2026</p>
-    <div class="construction-bar"></div>
-  </header>
-
-  <!-- INTRO / INPUT SECTION -->
-  <div id="intro-section" class="panel">
+  <!-- SEARCH FORM -->
+  <div id="search-form" class="panel">
     <h2 class="panel-title">~ Begin Your Excavation ~</h2>
-    <p class="intro-text">
-      Remember that <span class="hot">GeoCities</span> page you made in 1998? The one with the
-      flame GIFs and a MIDI of "Sandstorm" autoplaying? Or your <span class="hot">MySpace</span>
-      profile with the custom CSS that crashed Internet Explorer?
+    <p style="text-align:center; color:#ccc; margin-bottom:12px;">
+      Enter the username(s) you used in the early internet days.
+      We'll search the Wayback Machine for your digital fossils.
     </p>
-    <p class="intro-text">
-      Enter your old username(s) below and we'll search the
-      <span class="blink">Wayback Machine</span> to dig up whatever's left.
-      You might not be ready for what we find.
-    </p>
-
     <div class="input-group">
-      <label for="username-input">Enter your old username(s):</label>
       <input type="text" id="username-input" placeholder="xX_DarkAngel_Xx, sk8rboi2003" autocomplete="off">
-      <p class="hint">Separate multiple usernames with commas. We'll search all of them across 12 platforms.</p>
+      <button class="dig-button" id="dig-btn" onclick="handleDig()">Start Digging</button>
     </div>
-
-    <button class="dig-button" id="dig-btn" onclick="startDig()">
-      Start Digging
-    </button>
+    <p style="text-align:center; color:#666; font-size:11px; margin-top:8px;">
+      Separate multiple usernames with commas. We search GeoCities, MySpace, LiveJournal, and more!
+    </p>
   </div>
 
-  <!-- DIG PROGRESS SECTION -->
-  <div id="dig-section" class="panel">
+  <!-- PROGRESS SECTION -->
+  <div id="progress-section" class="panel progress-section">
     <h2 class="panel-title">~ Excavation In Progress ~</h2>
-    <p class="dig-status-header">Searching the ruins of Web 1.0 for <span id="dig-username-display" style="color:#ffff00"></span>...</p>
-    <div id="platform-list"></div>
-    <div id="dig-log" style="margin-top:12px; padding:8px; background:#000; border:1px solid #333; font-family:monospace; font-size:11px; color:#0f0; max-height:150px; overflow-y:auto; display:none;"></div>
+    <p style="text-align:center; color:#ffff00;">Searching the ruins of Web 1.0 for <span id="search-name" style="color:#ff00ff"></span>...</p>
+    <div id="platform-progress"></div>
   </div>
 
-  <!-- RESULTS SECTION -->
-  <div id="results-section">
+  <!-- RESULTS -->
+  <div id="results-area">
     <div class="score-banner" id="score-banner">
-      <div class="title-label">Your excavation rank:</div>
+      <div style="color:#ccc; font-size:14px;">Your excavation rank:</div>
       <div class="player-title" id="player-title"></div>
       <div class="total-score">Cringe Score: <span class="number" id="total-score">0</span></div>
     </div>
 
     <div class="panel">
       <h2 class="panel-title">~ Discovered Artifacts ~</h2>
-      <div id="artifacts-container"></div>
+      <div id="results-container"></div>
     </div>
 
-    <div style="text-align:center">
-      <button class="dig-again-btn" onclick="resetDig()">Dig Again</button>
-    </div>
+    <button class="dig-again-btn" onclick="resetDig()">Dig Again</button>
   </div>
 
   <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="construction-bar"></div>
-    <p>Best viewed in <b>Netscape Navigator 4.0</b> at <b>800x600</b> resolution</p>
+  <div class="footer">
+    <p style="color:#ff6699">Best viewed in Netscape Navigator 4.0 at 800x600 resolution</p>
     <p class="guestbook-link" onclick="alert('The guestbook has been offline since 2004. Sorry!')">Sign my Guestbook!</p>
     <div class="hit-counter">Visitors: <span id="hit-counter">000000</span></div>
-    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v6</p>
-  </footer>
+    <p style="margin-top:8px">Made with &lt;table&gt; tags and dreams | 2026 | v7</p>
+  </div>
 
 </div>
 
 <script>
-// ===== PLATFORM DEFINITIONS =====
-// Simplified URL patterns - one primary, one fallback per platform.
-// The Wayback Availability API needs www. prefixes for most old sites.
-const PLATFORMS = [
-  {
-    id: 'geocities',
-    name: 'GeoCities',
-    icon: '\u{1F3DA}',
-    urls: u => [`www.geocities.com/${u}`, `geocities.com/${u}`],
-    probeYear: 2003,
-    rarityBonus: 200,
-    era: '1994-2009',
-  },
-  {
-    id: 'myspace',
-    name: 'MySpace',
-    icon: '\u{1F3B5}',
-    urls: u => [`www.myspace.com/${u}`],
-    probeYear: 2008,
-    rarityBonus: 100,
-    era: '2003-2012',
-  },
-  {
-    id: 'angelfire',
-    name: 'Angelfire',
-    icon: '\u{1F525}',
-    urls: u => [`www.angelfire.com/ca/${u}`, `www.angelfire.com/games/${u}`],
-    probeYear: 2003,
-    rarityBonus: 150,
-    era: '1996-2010',
-  },
-  {
-    id: 'tripod',
-    name: 'Tripod',
-    icon: '\u{1F4F7}',
-    urls: u => [`members.tripod.com/${u}`, `${u}.tripod.com`],
-    probeYear: 2003,
-    rarityBonus: 150,
-    era: '1995-2010',
-  },
-  {
-    id: 'livejournal',
-    name: 'LiveJournal',
-    icon: '\u{1F4D3}',
-    urls: u => [`www.livejournal.com/users/${u}`, `${u}.livejournal.com`],
-    probeYear: 2005,
-    rarityBonus: 100,
-    era: '1999-2015',
-  },
-  {
-    id: 'xanga',
-    name: 'Xanga',
-    icon: '\u{270D}',
-    urls: u => [`www.xanga.com/${u}`],
-    probeYear: 2006,
-    rarityBonus: 150,
-    era: '2000-2013',
-  },
-  {
-    id: 'deviantart',
-    name: 'DeviantArt',
-    icon: '\u{1F3A8}',
-    urls: u => [`${u}.deviantart.com`],
-    probeYear: 2008,
-    rarityBonus: 50,
-    era: '2000-present',
-  },
-  {
-    id: 'blogspot',
-    name: 'Blogspot',
-    icon: '\u{1F4DD}',
-    urls: u => [`${u}.blogspot.com`],
-    probeYear: 2008,
-    rarityBonus: 50,
-    era: '2003-present',
-  },
-  {
-    id: 'aol',
-    name: 'AOL Hometown',
-    icon: '\u{1F4E7}',
-    urls: u => [`hometown.aol.com/${u}`, `members.aol.com/${u}`],
-    probeYear: 2003,
-    rarityBonus: 200,
-    era: '1997-2008',
-  },
-  {
-    id: 'freewebs',
-    name: 'Freewebs',
-    icon: '\u{1F578}',
-    urls: u => [`www.freewebs.com/${u}`],
-    probeYear: 2006,
-    rarityBonus: 100,
-    era: '2001-2012',
-  },
-  {
-    id: 'neopets',
-    name: 'Neopets',
-    icon: '\u{1F431}',
-    urls: u => [`www.neopets.com/userlookup.phtml?user=${u}`],
-    probeYear: 2006,
-    rarityBonus: 100,
-    era: '1999-present',
-  },
-  {
-    id: 'bolt',
-    name: 'Bolt.com',
-    icon: '\u{26A1}',
-    urls: u => [`www.bolt.com/${u}`],
-    probeYear: 2004,
-    rarityBonus: 300,
-    era: '1996-2008',
-  },
+// ===== VISITOR COUNTER =====
+var visitorNum = Math.floor(Math.random() * 900000) + 100000;
+document.getElementById('hit-counter').textContent = String(visitorNum).padStart(6, '0');
+
+// ===== PLATFORMS =====
+var PLATFORMS = [
+  { id: 'geocities', name: 'GeoCities', icon: '🏚', era: '1994-2009', year: 2003, bonus: 200,
+    urls: function(u) { return ['www.geocities.com/' + u]; } },
+  { id: 'myspace', name: 'MySpace', icon: '🎵', era: '2003-2012', year: 2008, bonus: 100,
+    urls: function(u) { return ['www.myspace.com/' + u]; } },
+  { id: 'angelfire', name: 'Angelfire', icon: '🔥', era: '1996-2010', year: 2003, bonus: 150,
+    urls: function(u) { return ['www.angelfire.com/ca/' + u]; } },
+  { id: 'tripod', name: 'Tripod', icon: '📷', era: '1995-2010', year: 2003, bonus: 150,
+    urls: function(u) { return [u + '.tripod.com']; } },
+  { id: 'livejournal', name: 'LiveJournal', icon: '📓', era: '1999-2015', year: 2005, bonus: 100,
+    urls: function(u) { return [u + '.livejournal.com']; } },
+  { id: 'xanga', name: 'Xanga', icon: '✍', era: '2000-2013', year: 2006, bonus: 150,
+    urls: function(u) { return ['www.xanga.com/' + u]; } },
+  { id: 'deviantart', name: 'DeviantArt', icon: '🎨', era: '2000-present', year: 2008, bonus: 50,
+    urls: function(u) { return [u + '.deviantart.com']; } },
+  { id: 'blogspot', name: 'Blogspot', icon: '📝', era: '2003-present', year: 2008, bonus: 50,
+    urls: function(u) { return [u + '.blogspot.com']; } },
+  { id: 'aol', name: 'AOL Hometown', icon: '📧', era: '1997-2008', year: 2003, bonus: 200,
+    urls: function(u) { return ['members.aol.com/' + u]; } },
+  { id: 'freewebs', name: 'Freewebs', icon: '🕸', era: '2001-2012', year: 2006, bonus: 100,
+    urls: function(u) { return ['www.freewebs.com/' + u]; } },
+  { id: 'neopets', name: 'Neopets', icon: '🐱', era: '1999-present', year: 2006, bonus: 100,
+    urls: function(u) { return ['www.neopets.com/userlookup.phtml?user=' + u]; } },
+  { id: 'bolt', name: 'Bolt.com', icon: '⚡', era: '1996-2008', year: 2004, bonus: 300,
+    urls: function(u) { return ['www.bolt.com/' + u]; } }
 ];
 
-// ===== HIT COUNTER =====
-const visitorNum = Math.floor(Math.random() * 900000) + 100000;
-document.getElementById('hit-counter').textContent = String(visitorNum).padStart(6, '0');
-document.getElementById('visitor-count-marquee').textContent = visitorNum.toLocaleString();
-
-// ===== WAYBACK SEARCH ENGINE =====
-// The Wayback Availability API (archive.org/wayback/available) has CORS headers
-// but returns inconsistent results and aggressively rate-limits. We use it as a
-// bonus confirmation, but the game always shows exploration links regardless.
-const AVAIL_API = 'https://archive.org/wayback/available';
-
-function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-function digLog(msg) {
-  console.log('[dig] ' + msg);
-  const el = document.getElementById('dig-log');
-  if (el) {
-    el.style.display = '';
-    el.innerHTML += msg + '<br>';
-    el.scrollTop = el.scrollHeight;
-  }
+// ===== SEARCH =====
+function checkWayback(url, timestamp) {
+  var endpoint = 'https://archive.org/wayback/available?url=' + url + '&timestamp=' + timestamp;
+  return fetch(endpoint, { signal: AbortSignal.timeout(8000) })
+    .then(function(resp) {
+      if (!resp.ok) return null;
+      return resp.json();
+    })
+    .then(function(data) {
+      if (!data) return null;
+      var snap = data.archived_snapshots && data.archived_snapshots.closest;
+      if (snap && snap.available && snap.status === '200') {
+        return { timestamp: snap.timestamp, waybackUrl: snap.url };
+      }
+      return null;
+    })
+    .catch(function() { return null; });
 }
 
-async function probeUrl(url, timestamp) {
-  const ts = timestamp ? '&timestamp=' + timestamp : '';
-  const endpoint = AVAIL_API + '?url=' + url + ts;
-  try {
-    const resp = await fetch(endpoint, { signal: AbortSignal.timeout(8000) });
-    if (!resp.ok) return null;
-    const data = await resp.json();
-    const snap = data?.archived_snapshots?.closest;
-    if (snap && snap.available && snap.status === '200') {
-      return { url: data.url, timestamp: snap.timestamp, waybackUrl: snap.url };
-    }
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-async function searchPlatform(platform, usernames) {
-  const ts = platform.probeYear + '0101';
-  for (const username of usernames) {
-    const urlPatterns = platform.urls(username);
-    const promises = urlPatterns.map(url => probeUrl(url, ts));
-    const results = await Promise.allSettled(promises);
-    for (let i = 0; i < results.length; i++) {
-      if (results[i].status === 'fulfilled' && results[i].value) {
-        const r = results[i].value;
+function searchOnePlatform(platform, username) {
+  var urls = platform.urls(username);
+  var ts = String(platform.year) + '0101';
+  var promises = urls.map(function(url) { return checkWayback(url, ts); });
+  
+  return Promise.all(promises).then(function(results) {
+    for (var i = 0; i < results.length; i++) {
+      if (results[i]) {
         return {
-          ...r, username, url: urlPatterns[i], platform,
-          calendarUrl: 'https://web.archive.org/web/*/' + urlPatterns[i],
+          platform: platform,
+          username: username,
+          url: urls[i],
           confirmed: true,
+          waybackUrl: results[i].waybackUrl,
+          calendarUrl: 'https://web.archive.org/web/*/' + urls[i]
         };
       }
     }
-    // No API confirmation, but still return the first URL pattern as a "possible" result
+    // Not confirmed by API, return explore link anyway
     return {
-      url: urlPatterns[0], username, platform,
-      calendarUrl: 'https://web.archive.org/web/*/' + urlPatterns[0],
-      waybackUrl: 'https://web.archive.org/web/' + ts + '/' + urlPatterns[0],
-      timestamp: ts,
+      platform: platform,
+      username: username,
+      url: urls[0],
       confirmed: false,
+      waybackUrl: 'https://web.archive.org/web/' + ts + '/' + urls[0],
+      calendarUrl: 'https://web.archive.org/web/*/' + urls[0]
     };
-  }
-  return null;
+  });
 }
 
-// ===== SCORING =====
-function calculateScore(result) {
-  if (!result) return 0;
-  let score = 50; // base for unconfirmed
-  if (result.confirmed) score = 150; // confirmed finds score higher
-  // Rarity bonus
-  score += result.platform.rarityBonus;
-  return score;
-}
+// ===== MAIN DIG =====
+var digging = false;
 
-function getTitle(confirmedCount) {
-  if (confirmedCount >= 6) return { title: 'Certified Internet Fossil', emoji: '\u{1F9B4}' };
-  if (confirmedCount >= 4) return { title: 'Digital Archaeologist', emoji: '\u{1F3FA}' };
-  if (confirmedCount >= 2) return { title: 'Web Archaeologist', emoji: '\u{26CF}' };
-  if (confirmedCount >= 1) return { title: 'Casual Lurker', emoji: '\u{1F440}' };
-  return { title: 'Mystery Surfer', emoji: '\u{1F3C4}' };
-}
-
-function formatTimestamp(ts) {
-  if (!ts || ts.length < 8) return 'Unknown';
-  return `${ts.substring(0, 4)}-${ts.substring(4, 6)}-${ts.substring(6, 8)}`;
-}
-
-// ===== UI RENDERING =====
-function renderPlatformList() {
-  const container = document.getElementById('platform-list');
-  container.innerHTML = '';
-  for (const p of PLATFORMS) {
-    const row = document.createElement('div');
-    row.className = 'platform-row';
-    row.id = `platform-row-${p.id}`;
-    row.innerHTML = `
-      <span class="platform-icon">${p.icon}</span>
-      <span class="platform-name">${p.name}</span>
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-${p.id}"></div>
-      </div>
-      <span class="platform-status searching" id="status-${p.id}">Waiting...</span>
-    `;
-    container.appendChild(row);
-  }
-}
-
-function updatePlatformStatus(platformId, state, detail) {
-  const fill = document.getElementById(`progress-${platformId}`);
-  const status = document.getElementById(`status-${platformId}`);
-  fill.className = 'progress-fill ' + state;
-  status.className = 'platform-status ' + state;
-  status.textContent = detail;
-}
-
-function renderResults(results) {
-  const container = document.getElementById('artifacts-container');
-  container.innerHTML = '';
-
-  const validResults = results.filter(r => r !== null);
-  const confirmed = validResults.filter(r => r.confirmed);
-  const unconfirmed = validResults.filter(r => !r.confirmed);
-
-  // Sort: confirmed first, then unconfirmed
-  const sorted = [...confirmed, ...unconfirmed];
-  const titleInfo = getTitle(confirmed.length);
-
-  // Update score banner
-  document.getElementById('score-banner').style.display = '';
-  document.getElementById('player-title').textContent = titleInfo.emoji + ' ' + titleInfo.title + ' ' + titleInfo.emoji;
-  const totalScore = sorted.reduce((sum, r) => sum + calculateScore(r), 0);
-  document.getElementById('total-score').textContent = totalScore.toLocaleString();
-
-  // Render confirmed finds
-  if (confirmed.length > 0) {
-    const header = document.createElement('h3');
-    header.style.cssText = 'color:#00ff00; margin:12px 0 8px; font-size:16px;';
-    header.textContent = '** CONFIRMED ARTIFACTS (' + confirmed.length + ') **';
-    container.appendChild(header);
-
-    for (const r of confirmed) {
-      container.appendChild(makeCard(r, true));
-    }
-  }
-
-  // Render exploration links for unconfirmed
-  if (unconfirmed.length > 0) {
-    const header = document.createElement('h3');
-    header.style.cssText = 'color:#ffff00; margin:20px 0 8px; font-size:16px;';
-    header.textContent = confirmed.length > 0
-      ? '~ Dig Sites to Explore (' + unconfirmed.length + ') ~'
-      : '~ Your Dig Sites (' + unconfirmed.length + ') ~';
-    container.appendChild(header);
-
-    if (confirmed.length === 0) {
-      const note = document.createElement('p');
-      note.style.cssText = 'color:#999; font-size:13px; margin-bottom:12px;';
-      note.textContent = 'The Wayback Machine API could not confirm any captures, but your pages might still be archived! Click the links below to check manually.';
-      container.appendChild(note);
-    }
-
-    for (const r of unconfirmed) {
-      container.appendChild(makeCard(r, false));
-    }
-  }
-}
-
-function makeCard(r, isConfirmed) {
-  const card = document.createElement('div');
-  card.className = 'artifact-card';
-  if (!isConfirmed) card.style.opacity = '0.75';
-  const badge = isConfirmed
-    ? '<span style="color:#00ff00; font-weight:bold;">VERIFIED FIND</span>'
-    : '<span style="color:#ffff00;">Click to explore</span>';
-  const score = calculateScore(r);
-  card.innerHTML =
-    '<div class="card-header">' +
-      '<span class="platform-label">' + r.platform.icon + ' ' + r.platform.name + ' <small>(' + r.platform.era + ')</small></span>' +
-      '<span class="cringe-score">' + badge + ' +' + score + ' pts</span>' +
-    '</div>' +
-    '<div class="artifact-details">' +
-      '<div class="detail-row">' +
-        '<span class="detail-label">URL:</span>' +
-        '<span class="detail-value">' + r.url + '</span>' +
-      '</div>' +
-      '<div class="detail-row">' +
-        '<span class="detail-label">Browse archive:</span>' +
-        '<span class="detail-value"><a href="' + r.calendarUrl + '" target="_blank" rel="noopener">View all captures on Wayback Machine</a></span>' +
-      '</div>' +
-      (isConfirmed ? '<div class="detail-row"><span class="detail-label">Direct link:</span><span class="detail-value"><a href="' + r.waybackUrl + '" target="_blank" rel="noopener">Open archived page</a></span></div>' : '') +
-    '</div>';
-  return card;
-}
-
-// ===== MAIN DIG LOGIC =====
-let isDigging = false;
-
-async function startDig() {
-  if (isDigging) return;
-  const input = document.getElementById('username-input').value.trim();
+function handleDig() {
+  if (digging) return;
+  
+  var input = document.getElementById('username-input').value.trim();
   if (!input) {
     document.getElementById('username-input').style.borderColor = '#ff0000';
-    document.getElementById('username-input').style.boxShadow = '0 0 8px #ff0000';
-    setTimeout(() => {
+    setTimeout(function() {
       document.getElementById('username-input').style.borderColor = '';
-      document.getElementById('username-input').style.boxShadow = '';
     }, 1500);
     return;
   }
-
-  isDigging = true;
-  const usernames = input.split(',').map(u => u.trim().toLowerCase()).filter(u => u.length > 0);
-
-  // Show dig section, hide others
-  document.getElementById('intro-section').style.display = 'none';
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('dig-section').style.display = '';
-  document.getElementById('dig-log').innerHTML = '';
-
-  document.getElementById('dig-username-display').textContent = usernames.join(', ');
-  document.getElementById('dig-btn').disabled = true;
-
-  renderPlatformList();
-
-  try {
-    const allResults = [];
-    for (let idx = 0; idx < PLATFORMS.length; idx++) {
-      const platform = PLATFORMS[idx];
-      updatePlatformStatus(platform.id, 'searching', 'Searching...');
-      try {
-        const result = await searchPlatform(platform, usernames);
-        if (result && result.confirmed) {
-          updatePlatformStatus(platform.id, 'found', 'FOUND!');
-        } else {
-          updatePlatformStatus(platform.id, 'not-found', 'Explore');
-        }
-        allResults.push(result);
-      } catch (e) {
-        updatePlatformStatus(platform.id, 'error', 'Error');
-        allResults.push(null);
-      }
-      if (idx < PLATFORMS.length - 1) await wait(200);
-    }
-
-    await wait(500);
-
-    document.getElementById('dig-section').style.display = 'none';
-    document.getElementById('results-section').style.display = '';
-    renderResults(allResults);
-  } catch (e) {
-    document.getElementById('dig-section').style.display = 'none';
-    document.getElementById('results-section').style.display = '';
-    document.getElementById('artifacts-container').innerHTML =
-      '<div class="no-results-msg">Something went wrong. Try again in a minute!<br><small style="color:#666">' +
-      (e.message || 'Unknown error') + '</small></div>';
-    document.getElementById('score-banner').style.display = 'none';
+  
+  digging = true;
+  var usernames = input.split(',').map(function(s) { return s.trim().toLowerCase(); }).filter(function(s) { return s.length > 0; });
+  
+  // Show progress
+  document.getElementById('search-form').style.display = 'none';
+  document.getElementById('results-area').style.display = 'none';
+  var progressEl = document.getElementById('progress-section');
+  progressEl.style.display = '';
+  progressEl.className = 'panel';
+  document.getElementById('search-name').textContent = usernames.join(', ');
+  
+  // Build progress rows
+  var progressHTML = '';
+  for (var i = 0; i < PLATFORMS.length; i++) {
+    var p = PLATFORMS[i];
+    progressHTML += '<div class="platform-row" id="row-' + p.id + '">' +
+      '<span class="icon">' + p.icon + '</span>' +
+      '<span class="name">' + p.name + '</span>' +
+      '<span class="status searching" id="stat-' + p.id + '">Waiting...</span>' +
+      '</div>';
   }
+  document.getElementById('platform-progress').innerHTML = progressHTML;
+  
+  // Search all platforms
+  var allResults = [];
+  var idx = 0;
+  
+  function searchNext() {
+    if (idx >= PLATFORMS.length) {
+      // Done searching, show results
+      setTimeout(function() { showResults(allResults); }, 400);
+      return;
+    }
+    
+    var platform = PLATFORMS[idx];
+    var statEl = document.getElementById('stat-' + platform.id);
+    if (statEl) {
+      statEl.textContent = 'Searching...';
+      statEl.className = 'status searching';
+    }
+    
+    // Search with first username
+    searchOnePlatform(platform, usernames[0]).then(function(result) {
+      allResults.push(result);
+      if (statEl) {
+        if (result.confirmed) {
+          statEl.textContent = 'FOUND!';
+          statEl.className = 'status found';
+        } else {
+          statEl.textContent = 'Done';
+          statEl.className = 'status';
+        }
+      }
+      idx++;
+      setTimeout(searchNext, 150);
+    }).catch(function() {
+      allResults.push(null);
+      if (statEl) {
+        statEl.textContent = 'Error';
+        statEl.className = 'status';
+      }
+      idx++;
+      setTimeout(searchNext, 150);
+    });
+  }
+  
+  searchNext();
+}
 
-  isDigging = false;
-  document.getElementById('dig-btn').disabled = false;
+function showResults(results) {
+  document.getElementById('progress-section').style.display = 'none';
+  document.getElementById('results-area').style.display = '';
+  
+  var confirmed = results.filter(function(r) { return r && r.confirmed; });
+  var unconfirmed = results.filter(function(r) { return r && !r.confirmed; });
+  
+  // Score
+  var totalScore = 0;
+  for (var i = 0; i < results.length; i++) {
+    if (results[i]) {
+      totalScore += results[i].confirmed ? (150 + results[i].platform.bonus) : (50 + results[i].platform.bonus);
+    }
+  }
+  
+  // Title
+  var title = '🏄 Mystery Surfer 🏄';
+  if (confirmed.length >= 6) title = '🦴 Certified Internet Fossil 🦴';
+  else if (confirmed.length >= 4) title = '🏺 Digital Archaeologist 🏺';
+  else if (confirmed.length >= 2) title = '⛏ Web Archaeologist ⛏';
+  else if (confirmed.length >= 1) title = '👀 Casual Lurker 👀';
+  
+  document.getElementById('player-title').textContent = title;
+  document.getElementById('total-score').textContent = String(totalScore);
+  
+  // Build results HTML
+  var html = '';
+  
+  if (confirmed.length > 0) {
+    html += '<h3 style="color:#00ff00; margin:12px 0 8px;">** CONFIRMED ARTIFACTS (' + confirmed.length + ') **</h3>';
+    for (var i = 0; i < confirmed.length; i++) {
+      html += makeCardHTML(confirmed[i]);
+    }
+  }
+  
+  if (unconfirmed.length > 0) {
+    html += '<h3 style="color:#ffff00; margin:20px 0 8px;">~ Dig Sites to Explore (' + unconfirmed.length + ') ~</h3>';
+    if (confirmed.length === 0) {
+      html += '<p style="color:#999; font-size:13px; margin-bottom:12px;">The Wayback Machine API didn\'t confirm any captures right now (it\'s unreliable), but your pages might still be archived! Click the links below to check.</p>';
+    }
+    for (var i = 0; i < unconfirmed.length; i++) {
+      html += makeCardHTML(unconfirmed[i]);
+    }
+  }
+  
+  document.getElementById('results-container').innerHTML = html;
+  digging = false;
+}
+
+function makeCardHTML(r) {
+  var cardClass = r.confirmed ? 'artifact-card confirmed' : 'artifact-card';
+  var badge = r.confirmed
+    ? '<span class="badge badge-confirmed">VERIFIED FIND</span>'
+    : '<span class="badge badge-explore">Click to explore</span>';
+  
+  var links = '<div class="card-links">' +
+    '<a href="' + r.calendarUrl + '" target="_blank">Browse all captures</a>';
+  if (r.confirmed) {
+    links += '<a href="' + r.waybackUrl + '" target="_blank">View archived page</a>';
+  } else {
+    links += '<a href="' + r.waybackUrl + '" target="_blank">Try this snapshot</a>';
+  }
+  links += '</div>';
+  
+  return '<div class="' + cardClass + '">' +
+    '<div class="card-header">' +
+      '<span class="platform-label">' + r.platform.icon + ' ' + r.platform.name + '</span>' +
+      badge +
+    '</div>' +
+    '<div class="card-era">Era: ' + r.platform.era + ' | URL: ' + r.url + '</div>' +
+    links +
+  '</div>';
 }
 
 function resetDig() {
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('dig-section').style.display = 'none';
-  document.getElementById('intro-section').style.display = '';
+  document.getElementById('results-area').style.display = 'none';
+  document.getElementById('progress-section').style.display = 'none';
+  document.getElementById('search-form').style.display = '';
   document.getElementById('username-input').value = '';
   document.getElementById('username-input').focus();
 }
 
-// ===== CURSOR SPARKLE TRAIL =====
-document.addEventListener('mousemove', (e) => {
-  const sparkle = document.createElement('div');
-  sparkle.textContent = ['*', '+', '.', '\u2729', '\u2726'][Math.floor(Math.random() * 5)];
-  sparkle.style.cssText = `
-    position: fixed;
-    left: ${e.clientX}px;
-    top: ${e.clientY}px;
-    color: ${['#ff00ff', '#00ffff', '#ffff00', '#ff6699', '#00ff00'][Math.floor(Math.random() * 5)]};
-    font-size: ${8 + Math.random() * 12}px;
-    pointer-events: none;
-    z-index: 9999;
-    animation: sparkle-fade 0.8s ease-out forwards;
-  `;
+// ===== SPARKLE CURSOR =====
+document.addEventListener('mousemove', function(e) {
+  var sparkle = document.createElement('div');
+  var chars = ['*', '+', '.'];
+  var colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff6699', '#00ff00'];
+  sparkle.textContent = chars[Math.floor(Math.random() * chars.length)];
+  sparkle.style.cssText = 'position:fixed;left:' + e.clientX + 'px;top:' + e.clientY + 'px;color:' +
+    colors[Math.floor(Math.random() * colors.length)] + ';font-size:' + (8 + Math.random() * 12) +
+    'px;pointer-events:none;z-index:9999;animation:sparkle-fade 0.8s ease-out forwards;';
   document.body.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 800);
+  setTimeout(function() { sparkle.remove(); }, 800);
 });
 
-// Add sparkle keyframes
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes sparkle-fade {
-    0% { opacity: 1; transform: translate(0, 0) scale(1); }
-    100% { opacity: 0; transform: translate(${Math.random() > 0.5 ? '' : '-'}${5 + Math.random() * 15}px, -${10 + Math.random() * 20}px) scale(0.3); }
-  }
-`;
-document.head.appendChild(style);
-
-// Focus the input on load
-window.addEventListener('load', () => {
+// Focus input on load
+window.addEventListener('load', function() {
   document.getElementById('username-input').focus();
 });
 </script>
-
 </body>
 </html>
